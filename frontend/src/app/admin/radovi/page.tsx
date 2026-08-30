@@ -372,32 +372,34 @@ function PhotoRow({
 
   return (
     <Card className="p-4">
-      <div className="flex gap-4">
-        <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded bg-gray-100">
-          {photo.thumbnailUrl && (
-            <Image src={photo.thumbnailUrl} alt={photo.title ?? ""} fill sizes="80px" className="object-cover" />
-          )}
+      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+        <div className="flex min-w-0 flex-1 gap-4">
+          <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded bg-gray-100">
+            {photo.thumbnailUrl && (
+              <Image src={photo.thumbnailUrl} alt={photo.title ?? ""} fill sizes="80px" className="object-cover" />
+            )}
+          </div>
+
+          <div className="min-w-0 flex-1">
+            {!editing ? (
+              <>
+                <p className="truncate font-medium">{photo.title || <span className="text-gray-400">Bez naziva</span>}</p>
+                <p className="text-sm text-gray-500">{photo.categoryName ?? "Bez kategorije"}</p>
+                {photo.featured && (
+                  <span className="mt-1 inline-block rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-800">Istaknuto</span>
+                )}
+              </>
+            ) : (
+              <div className="space-y-2">
+                <TextInput value={title} placeholder="Naziv" onChange={(e) => setTitle(e.target.value)} />
+                <TextArea value={description} placeholder="Opis" rows={2} onChange={(e) => setDescription(e.target.value)} />
+                <CategorySelect categories={categories} value={categoryId} onChange={setCategoryId} />
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="min-w-0 flex-1">
-          {!editing ? (
-            <>
-              <p className="truncate font-medium">{photo.title || <span className="text-gray-400">Bez naziva</span>}</p>
-              <p className="text-sm text-gray-500">{photo.categoryName ?? "Bez kategorije"}</p>
-              {photo.featured && (
-                <span className="mt-1 inline-block rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-800">Istaknuto</span>
-              )}
-            </>
-          ) : (
-            <div className="space-y-2">
-              <TextInput value={title} placeholder="Naziv" onChange={(e) => setTitle(e.target.value)} />
-              <TextArea value={description} placeholder="Opis" rows={2} onChange={(e) => setDescription(e.target.value)} />
-              <CategorySelect categories={categories} value={categoryId} onChange={setCategoryId} />
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-wrap items-center gap-1 sm:flex-col sm:items-end">
           {reorderable && (
             <div className="flex gap-1">
               <Button variant="ghost" onClick={onMoveUp} title="Gore" className="px-2">↑</Button>
@@ -410,7 +412,7 @@ function PhotoRow({
               <Button onClick={save} disabled={saving}>{saving ? "…" : "Sačuvaj"}</Button>
             </div>
           ) : (
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-1">
               <Button variant="secondary" onClick={onToggleFeatured}>
                 {photo.featured ? "Ukloni ★" : "Istakni ★"}
               </Button>

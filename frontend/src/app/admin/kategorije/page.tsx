@@ -306,7 +306,8 @@ function CategoryRow({
 
   return (
     <Card className="p-4">
-      <div className="flex gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+        <div className="flex min-w-0 flex-1 gap-4">
         <div className="relative h-20 w-28 flex-shrink-0 overflow-hidden rounded bg-gray-100">
           {category.coverUrl && (
             <Image src={category.coverUrl} alt={category.name} fill sizes="112px" className="object-cover" />
@@ -353,8 +354,9 @@ function CategoryRow({
             </Field>
           </div>
         </div>
+        </div>
 
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-wrap items-center gap-1 sm:flex-col sm:items-end">
           <div className="flex gap-1">
             <Button variant="ghost" onClick={onMoveUp} className="px-2">↑</Button>
             <Button variant="ghost" onClick={onMoveDown} className="px-2">↓</Button>
@@ -365,7 +367,7 @@ function CategoryRow({
               <Button onClick={save} disabled={saving}>{saving ? "…" : "Sačuvaj"}</Button>
             </div>
           ) : (
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-1">
               <Button variant="secondary" onClick={() => setEditing(true)}>Uredi</Button>
               <Button variant="danger" onClick={onDelete}>Obriši</Button>
             </div>
