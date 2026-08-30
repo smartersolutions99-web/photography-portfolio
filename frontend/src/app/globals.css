@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-serif: Georgia, serif;
+  --font-display: Impact, sans-serif;
+  --font-sans: system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: theme("colors.cream");
+  color: theme("colors.ink");
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: theme("colors.ink");
+  color: theme("colors.cream");
+}
+
+@layer components {
+  /* Veliki editorial naslov u serif italiku */
+  .display-serif {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+  }
+
+  /* Bold uppercase kondenzovani sans */
+  .display-cond {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 600;
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+  }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: theme("colors.muted");
+  }
+
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-underline:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* Masonry preko CSS kolona */
+.masonry {
+  column-gap: 1rem;
+}
+.masonry > * {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+}
+@media (min-width: 640px) {
+  .masonry {
+    column-count: 2;
+  }
+}
+@media (min-width: 1024px) {
+  .masonry {
+    column-count: 3;
+  }
+}
+
+/* Sakrij scrollbar u overlay meniju */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Custom kursor — nativni ostaje svuda; skriva se SAMO nad radovima (data-cursor="view") */
+@media (hover: hover) and (pointer: fine) {
+  .has-custom-cursor [data-cursor="view"],
+  .has-custom-cursor [data-cursor="view"] * {
+    cursor: none;
+  }
+}

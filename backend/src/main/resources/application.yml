@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: portfolio-backend
+
+  datasource:
+    url: jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require
+    username: postgres.lriewuvmorxriynuiziq
+    password: DYIoazIP6MKdI3WE
+    hikari:
+      maximum-pool-size: 5
+      # Supabase session pooler + JDBC: iskljuci server-side prepared statement kes
+      data-source-properties:
+        prepareThreshold: 0
+
+  jpa:
+    hibernate:
+      # Flyway upravlja semom; Hibernate je ne dira niti validira (izbjegava tz/type nijanse)
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+server:
+  port: 8080
+
+app:
+  cors:
+    # "*" = dozvoli sve origine (dev). Za produkciju stavi konkretan URL frontenda.
+    origins: ${APP_CORS_ORIGINS:*}
+  jwt:
+    secret: ${JWT_SECRET:change-me-please-use-a-long-random-secret-at-least-32-bytes}
+    expiration-hours: 24
+  admin:
+    username: admin
+    # Postavi ILI raw lozinku (ADMIN_PASSWORD) ILI bcrypt hash (ADMIN_PASSWORD_HASH)
+    password: test123
+    password-hash: ${ADMIN_PASSWORD_HASH:}
+  r2:
+    account-id: 9eb257f3d7139a0f944f7bc6df0a51e1
+    access-key-id: e77716666034b431762da3de98d6430f
+    secret-access-key: 2e719b1eec0a88b9148e6db3398538984371c63fcb9f6b3d8b9c23e2ac487824
+    bucket: fotograf-portfolio
+    public-base-url: https://pub-8a017cba0d7e4d3eb26d748df85ab109.r2.dev
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    org.flywaydb: info
