@@ -1,10 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import { photoAlt } from "@/lib/media";
 import type { Category, Photo } from "@/lib/types";
+import { BlurImage } from "./BlurImage";
 
 interface PhotoGalleryProps {
   photos: Photo[];
@@ -58,9 +59,10 @@ export function PhotoGallery({ photos, categories }: PhotoGalleryProps) {
             data-cursor="view"
             className="group relative block w-full overflow-hidden bg-line/40 text-left"
           >
-            <Image
+            <BlurImage
               src={p.thumbnailUrl || p.url}
-              alt={p.title ?? "Fotografija"}
+              alt={photoAlt(p)}
+              blurDataUrl={p.blurDataUrl}
               width={p.width ?? 1000}
               height={p.height ?? 1250}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

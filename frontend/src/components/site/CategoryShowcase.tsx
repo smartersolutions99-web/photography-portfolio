@@ -1,10 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import type { CategoryNode } from "@/lib/types";
+import { BlurImage } from "./BlurImage";
 
 /**
  * Interaktivni prikaz glavnih kategorija: lista sa hover-reveal slikom desno
@@ -49,7 +49,7 @@ export function CategoryShowcase({ nodes }: { nodes: CategoryNode[] }) {
             {/* Slika unutar reda — samo na mobilnom (nema hover) */}
             {n.coverUrl && (
               <div className="relative mt-5 aspect-[16/10] w-full overflow-hidden bg-line/40 md:hidden">
-                <Image src={n.coverUrl} alt={n.name} fill sizes="100vw" className="object-cover" />
+                <BlurImage src={n.coverUrl} alt={`${n.name} — kategorija`} fill sizes="100vw" className="object-cover" />
               </div>
             )}
           </Link>
@@ -68,7 +68,7 @@ export function CategoryShowcase({ nodes }: { nodes: CategoryNode[] }) {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0"
             >
-              <Image src={activeNode.coverUrl} alt={activeNode.name} fill sizes="45vw" className="object-cover" />
+              <BlurImage src={activeNode.coverUrl} alt={`${activeNode.name} — kategorija`} fill sizes="45vw" className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-ink/0 to-ink/0" />
               <div className="absolute bottom-0 p-8">
                 <p className="eyebrow !text-cream/70">

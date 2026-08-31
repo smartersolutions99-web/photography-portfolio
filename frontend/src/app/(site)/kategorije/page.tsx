@@ -2,11 +2,13 @@ import { CategoryGrid } from "@/components/site/CategoryGrid";
 import { Reveal } from "@/components/site/Reveal";
 import { getCategories } from "@/lib/api";
 import { buildTree } from "@/lib/categories";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Kategorije — Studio",
-  description: "Pregled kategorija i potkategorija radova.",
-};
+export const metadata = pageMetadata({
+  title: "Kategorije",
+  description: "Pregled kategorija i potkategorija radova — izaberi temu za detaljan pregled.",
+  path: "/kategorije",
+});
 
 export default async function KategorijePage() {
   const categories = await getCategories();

@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import type { CategoryNode } from "@/lib/types";
+import { BlurImage } from "./BlurImage";
 
 /**
  * Kategorije kao velike slikovne pločice — cover slika, naziv preko slike,
@@ -28,9 +28,9 @@ export function CategoryGrid({ nodes }: { nodes: CategoryNode[] }) {
             className="group relative block aspect-[3/4] overflow-hidden bg-line/40"
           >
             {n.coverUrl && (
-              <Image
+              <BlurImage
                 src={n.coverUrl}
-                alt={n.name}
+                alt={`${n.name} — kategorija`}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="object-cover transition-transform duration-[1400ms] ease-editorial group-hover:scale-105"

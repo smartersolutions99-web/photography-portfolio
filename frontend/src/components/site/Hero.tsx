@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import Image from "next/image";
 import { useRef } from "react";
+import { BlurImage } from "./BlurImage";
 
 interface HeroProps {
   imageUrl: string | null;
@@ -24,7 +24,7 @@ export function Hero({ imageUrl, title, subtitle }: HeroProps) {
     <section ref={ref} className="relative h-[100svh] w-full overflow-hidden bg-ink">
       <motion.div style={{ y, scale }} className="absolute inset-0">
         {imageUrl && (
-          <Image
+          <BlurImage
             src={imageUrl}
             alt={title}
             fill

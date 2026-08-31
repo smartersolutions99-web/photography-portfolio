@@ -11,6 +11,7 @@ public record PhotoDto(
         String thumbnailUrl,
         Integer width,
         Integer height,
+        String blurDataUrl,
         boolean featured,
         int displayOrder
 ) {

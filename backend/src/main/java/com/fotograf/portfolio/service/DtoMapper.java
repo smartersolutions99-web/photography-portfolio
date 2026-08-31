@@ -38,6 +38,7 @@ public class DtoMapper {
                 storage.publicUrl(thumbKey),
                 p.getWidth(),
                 p.getHeight(),
+                p.getBlurDataUrl(),
                 p.isFeatured(),
                 p.getDisplayOrder());
     }

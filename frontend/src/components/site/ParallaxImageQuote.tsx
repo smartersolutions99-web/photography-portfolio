@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import Image from "next/image";
 import { useRef } from "react";
+import { BlurImage } from "./BlurImage";
 
 /** Full-bleed slika sa parallaxom i elegantnim citatom preko nje. */
 export function ParallaxImageQuote({
@@ -21,7 +21,7 @@ export function ParallaxImageQuote({
   return (
     <section ref={ref} className="relative flex h-[85svh] min-h-[500px] items-center overflow-hidden bg-ink">
       <motion.div style={{ y }} className="absolute inset-[-8%]">
-        {imageUrl && <Image src={imageUrl} alt="" fill sizes="100vw" className="object-cover" />}
+        {imageUrl && <BlurImage src={imageUrl} alt="" fill sizes="100vw" className="object-cover" />}
       </motion.div>
       <div className="absolute inset-0 bg-ink/55" />
 

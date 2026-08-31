@@ -1,9 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
+import { BlurImage } from "@/components/site/BlurImage";
 import { GalleryExplorer } from "@/components/site/GalleryExplorer";
 import { Reveal } from "@/components/site/Reveal";
 import { getCategories, getPhotos } from "@/lib/api";
 import { buildTree } from "@/lib/categories";
+import { pageMetadata } from "@/lib/seo";
 import type { CategoryNode } from "@/lib/types";
 
 function findNode(nodes: CategoryNode[], slug: string): CategoryNode | null {
@@ -18,7 +19,14 @@ function findNode(nodes: CategoryNode[], slug: string): CategoryNode | null {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const nodes = buildTree(await getCategories());
   const node = findNode(nodes, params.slug);
-  return { title: `${node?.name ?? "Kategorija"} — Studio` };
+  return pageMetadata({
+    title: node?.name ?? "Kategorija",
+    description: node?.description
+      ? node.description
+      : `Fotografije iz kategorije ${node?.name ?? "portfolija"}.`,
+    path: `/kategorije/${params.slug}`,
+    image: node?.coverUrl,
+  });
 }
 
 export default async function CategoryPage({ params }: { params: { slug: string } }) {
@@ -41,7 +49,14 @@ export default async function CategoryPage({ params }: { params: { slug: string 
     <>
       <section className="relative flex h-[70svh] min-h-[420px] items-end overflow-hidden bg-ink">
         {node.coverUrl && (
-          <Image src={node.coverUrl} alt={node.name} fill priority sizes="100vw" className="object-cover opacity-70" />
+          <BlurImage
+            src={node.coverUrl}
+            alt={`${node.name} — naslovna fotografija`}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-70"
+          />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-ink/10" />
         <div className="relative z-10 mx-auto w-full max-w-[1400px] px-5 pb-16 md:px-10 md:pb-24">

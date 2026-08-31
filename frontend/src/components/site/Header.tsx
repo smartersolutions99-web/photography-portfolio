@@ -38,6 +38,10 @@ export function Header({ siteName, contact }: { siteName: string; contact: Conta
   }, [open]);
 
   const solid = scrolled || open;
+  // Boja teksta: preko tamne foto-hero sekcije (transparentan header) koristimo
+  // mix-blend-difference da logo/meni budu čitljivi na bilo kojoj pozadini;
+  // kad je header pun (scrolled) ide obično ink, a kad je meni otvoren — cream.
+  const tone = open ? "text-cream" : scrolled ? "text-ink" : "text-cream mix-blend-difference";
 
   return (
     <>
@@ -49,7 +53,7 @@ export function Header({ siteName, contact }: { siteName: string; contact: Conta
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-5 py-4 md:px-10 md:py-6">
           <Link
             href="/"
-            className={`display-cond text-lg tracking-widest transition-colors ${open ? "text-cream" : "text-ink"}`}
+            className={`display-cond text-lg tracking-widest transition-colors ${tone}`}
           >
             {siteName}
           </Link>
@@ -57,7 +61,7 @@ export function Header({ siteName, contact }: { siteName: string; contact: Conta
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className={`group flex items-center gap-3 transition-colors ${open ? "text-cream" : "text-ink"}`}
+            className={`group flex items-center gap-3 transition-colors ${tone}`}
             aria-label={open ? "Zatvori meni" : "Otvori meni"}
           >
             <span className="eyebrow !text-current">{open ? "Zatvori" : "Meni"}</span>

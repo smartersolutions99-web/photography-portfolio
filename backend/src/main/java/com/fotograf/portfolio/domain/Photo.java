@@ -41,6 +41,10 @@ public class Photo {
 
     private Integer height;
 
+    /** LQIP: mali base64 blur (data URI) originala; placeholder dok se slika učita. */
+    @Column(name = "blur_data_url", columnDefinition = "text")
+    private String blurDataUrl;
+
     @Column(nullable = false)
     private boolean featured = false;
 
@@ -117,6 +121,14 @@ public class Photo {
 
     public void setHeight(Integer height) {
         this.height = height;
+    }
+
+    public String getBlurDataUrl() {
+        return blurDataUrl;
+    }
+
+    public void setBlurDataUrl(String blurDataUrl) {
+        this.blurDataUrl = blurDataUrl;
     }
 
     public boolean isFeatured() {

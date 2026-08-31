@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 import net.coobird.thumbnailator.Thumbnails;
@@ -30,6 +31,8 @@ public class StorageService {
 
     private static final Logger log = LoggerFactory.getLogger(StorageService.class);
     private static final int THUMB_MAX = 900;
+    // LQIP: sićušna slika (max ~24px) koja se base64-uje i šalje frontendu kao blur placeholder
+    private static final int BLUR_MAX = 24;
 
     private final S3Client s3Client;
     private final String bucket;
@@ -45,7 +48,8 @@ public class StorageService {
     }
 
     /** Rezultat uploada fotografije. */
-    public record UploadResult(String objectKey, String thumbnailKey, Integer width, Integer height) {
+    public record UploadResult(String objectKey, String thumbnailKey, Integer width, Integer height,
+                               String blurDataUrl) {
     }
 
     /**
@@ -64,6 +68,7 @@ public class StorageService {
         Integer width = null;
         Integer height = null;
         String thumbnailKey = null;
+        String blurDataUrl = null;
         try {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
             if (image != null) {
@@ -88,12 +93,36 @@ public class StorageService {
                         .toOutputStream(thumbOut);
                 thumbnailKey = base + "_thumb.jpg";
                 put(thumbnailKey, thumbOut.toByteArray(), "image/jpeg");
+
+                blurDataUrl = buildBlurDataUrl(source);
             }
         } catch (IOException | RuntimeException e) {
             log.warn("Neuspjelo generisanje thumbnaila za {}: {}", objectKey, e.getMessage());
         }
 
-        return new UploadResult(objectKey, thumbnailKey, width, height);
+        return new UploadResult(objectKey, thumbnailKey, width, height, blurDataUrl);
+    }
+
+    /**
+     * Generiše LQIP: sićušan (max ~24px) JPEG originala, base64-ovan kao data URI.
+     * Frontend ga prikazuje zamućenog dok se prava slika ne učita. Vraća null ako
+     * generisanje ne uspije (upload se tad nastavlja bez blur-a).
+     */
+    private String buildBlurDataUrl(BufferedImage source) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Thumbnails.of(source)
+                    .size(BLUR_MAX, BLUR_MAX)
+                    .keepAspectRatio(true)
+                    .outputQuality(0.5)
+                    .outputFormat("jpg")
+                    .toOutputStream(out);
+            String base64 = Base64.getEncoder().encodeToString(out.toByteArray());
+            return "data:image/jpeg;base64," + base64;
+        } catch (IOException | RuntimeException e) {
+            log.warn("Neuspjelo generisanje blur placeholdera: {}", e.getMessage());
+            return null;
+        }
     }
 
     /** Jednostavan upload (npr. portret), samo original, vraca object key. */

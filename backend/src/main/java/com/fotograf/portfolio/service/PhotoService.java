@@ -61,6 +61,7 @@ public class PhotoService {
         photo.setThumbnailKey(result.thumbnailKey());
         photo.setWidth(result.width());
         photo.setHeight(result.height());
+        photo.setBlurDataUrl(result.blurDataUrl());
         photo.setFeatured(featured);
         photo.setDisplayOrder((int) photoRepository.count());
 

@@ -16,8 +16,8 @@ const config: Config = {
         accent: "#9A7B4F",
       },
       fontFamily: {
-        serif: ["var(--font-serif)", "Georgia", "serif"],
-        display: ["var(--font-display)", "Impact", "sans-serif"],
+        serif: ["var(--font-serif)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       letterSpacing: {

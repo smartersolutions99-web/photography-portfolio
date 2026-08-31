@@ -11,6 +11,8 @@ export interface Photo {
   height: number | null;
   featured: boolean;
   displayOrder: number;
+  // Pravi LQIP (mali base64 blur original slike) sa backenda; null za demo/starije slike
+  blurDataUrl?: string | null;
 }
 
 export interface Category {

@@ -2,11 +2,13 @@ import { GalleryExplorer } from "@/components/site/GalleryExplorer";
 import { Reveal } from "@/components/site/Reveal";
 import { getCategories, getPhotos } from "@/lib/api";
 import { buildTree } from "@/lib/categories";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Galerija — Studio",
-  description: "Kompletan portfolio radova.",
-};
+export const metadata = pageMetadata({
+  title: "Galerija",
+  description: "Kompletan portfolio radova — pregled svih fotografija po kategorijama i potkategorijama.",
+  path: "/galerija",
+});
 
 export default async function GalerijaPage() {
   const [photos, categories] = await Promise.all([getPhotos(), getCategories()]);

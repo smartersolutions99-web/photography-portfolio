@@ -4,10 +4,15 @@ import * as demo from "./demo";
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 const REVALIDATE = 30;
 
+// Ako backend „spava" (Render cold start ~60-90s), ne držimo stranicu — nakon
+// ovog vremena padamo na demo umjesto da SSR visi. Warm backend odgovara <1s.
+const FETCH_TIMEOUT_MS = 12000;
+
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
     const res = await fetch(`${BASE}/api/public${path}`, {
       next: { revalidate: REVALIDATE },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}`);

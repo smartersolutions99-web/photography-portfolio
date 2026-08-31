@@ -1,10 +1,13 @@
 import { ContactForm } from "@/components/site/ContactForm";
 import { Reveal } from "@/components/site/Reveal";
 import { getContact } from "@/lib/api";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Kontakt — Studio",
-};
+export const metadata = pageMetadata({
+  title: "Kontakt",
+  description: "Stupi u kontakt — provjeri dostupnost termina i zatraži ponudu za tvoj događaj.",
+  path: "/kontakt",
+});
 
 export default async function ContactPage() {
   const contact = await getContact();
@@ -14,7 +17,7 @@ export default async function ContactPage() {
       <div className="mx-auto max-w-[1400px]">
         <Reveal className="mb-16 md:mb-24">
           <p className="eyebrow">Stupimo u kontakt</p>
-          <h1 className="display-serif mt-3 text-5xl md:text-8xl">Razgovarajmo</h1>
+          <h1 className="display-serif mt-3 text-5xl md:text-8xl">Kontaktirajte nas</h1>
         </Reveal>
 
         <div className="grid gap-16 md:grid-cols-12">

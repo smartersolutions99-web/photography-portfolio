@@ -1,10 +1,13 @@
-import Image from "next/image";
+import { BlurImage } from "@/components/site/BlurImage";
 import { Reveal } from "@/components/site/Reveal";
 import { getAbout } from "@/lib/api";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "O meni — Studio",
-};
+export const metadata = pageMetadata({
+  title: "O meni",
+  description: "Upoznaj fotografa iza objektiva — priča, pristup i stil rada.",
+  path: "/o-nama",
+});
 
 export default async function AboutPage() {
   const about = await getAbout();
@@ -22,9 +25,9 @@ export default async function AboutPage() {
           {about.portraitUrl && (
             <Reveal className="md:col-span-5">
               <div className="relative aspect-[4/5] w-full overflow-hidden bg-line/40">
-                <Image
+                <BlurImage
                   src={about.portraitUrl}
-                  alt={about.heading ?? "Portret"}
+                  alt={about.heading ?? "Portret fotografa"}
                   fill
                   sizes="(max-width: 768px) 100vw, 40vw"
                   className="object-cover"
