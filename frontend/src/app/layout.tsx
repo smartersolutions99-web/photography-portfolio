@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
-// Moderni „gallery/agency" par: čist grotesk za naslove/brend + neutralni sans za tekst.
-// (Varijabla se i dalje zove --font-serif zbog postojećih .display-serif klasa,
-//  ali sada nosi bezserifni grotesk — bez ijednog kurziva.)
-const serif = Space_Grotesk({
+// Editorial „high-end photography" par: elegantan visoko-kontrastni serif za
+// naslove/brend (uspravno, BEZ kurziva) + neutralni sans (Inter) za tekst/nav.
+// Varijabla se i dalje zove --font-serif zbog postojećih .display-serif klasa.
+const serif = Cormorant_Garamond({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600"],
+  style: "normal",
   variable: "--font-serif",
   display: "swap",
 });

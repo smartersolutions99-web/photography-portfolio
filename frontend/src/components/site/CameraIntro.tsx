@@ -43,12 +43,12 @@ export function CameraIntro({ imageUrl }: { imageUrl?: string | null }) {
     setPlaying(true); // „skidanje poklopca objektiva" — viewfinder se kružno otvara iz crnog
 
     const timers = [
-      setTimeout(() => setPhase("locked"), 2600),
-      setTimeout(() => setPhase("flash"), 3500),
+      setTimeout(() => setPhase("locked"), 1650),
+      setTimeout(() => setPhase("flash"), 2350),
       setTimeout(() => {
         setPhase("done");
         revealIntro(); // sadržaj kreće da se pojavljuje dok se blic gasi
-      }, 3820),
+      }, 2650),
       setTimeout(() => {
         setShow(false);
         document.body.style.overflow = prevOverflow;
@@ -59,7 +59,7 @@ export function CameraIntro({ imageUrl }: { imageUrl?: string | null }) {
         } catch {
           /* ignore */
         }
-      }, 4750),
+      }, 3350),
     ];
 
     return () => {

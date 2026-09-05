@@ -1,6 +1,6 @@
 import { BlurImage } from "@/components/site/BlurImage";
 import { Reveal } from "@/components/site/Reveal";
-import { getAbout } from "@/lib/api";
+import { getAbout, getPhotos } from "@/lib/api";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -10,17 +10,21 @@ export const metadata = pageMetadata({
 });
 
 export default async function AboutPage() {
-  const about = await getAbout();
+  const [about, photos] = await Promise.all([getAbout(), getPhotos()]);
   const paragraphs = (about.body ?? "").split(/\n{2,}|\n/).filter((p) => p.trim().length > 0);
+  const detail1 = photos[1]?.url ?? null;
+  const detail2 = photos[3]?.url ?? null;
 
   return (
-    <section className="px-5 pb-24 pt-32 md:px-10 md:pb-36 md:pt-48">
+    <section className="px-5 pb-24 pt-32 md:px-10 md:pb-40 md:pt-48">
       <div className="mx-auto max-w-[1400px]">
+        {/* Masthead */}
         <Reveal className="mb-16 md:mb-24">
           <p className="eyebrow">Upoznajmo se</p>
-          <h1 className="display-serif mt-3 text-5xl md:text-8xl">{about.heading ?? "O meni"}</h1>
+          <h1 className="display-caps mt-4 text-5xl leading-[0.95] md:text-8xl">{about.heading ?? "O meni"}</h1>
         </Reveal>
 
+        {/* Profil: veliki portret + tekstualne kolone */}
         <div className="grid gap-12 md:grid-cols-12 md:gap-16">
           {about.portraitUrl && (
             <Reveal className="md:col-span-5">
@@ -33,6 +37,11 @@ export default async function AboutPage() {
                   className="object-cover"
                 />
               </div>
+              {detail1 && (
+                <div className="relative mt-6 hidden aspect-[3/2] w-2/3 overflow-hidden bg-line/40 md:block">
+                  <BlurImage src={detail1} alt="" fill sizes="30vw" className="object-cover" />
+                </div>
+              )}
             </Reveal>
           )}
 
@@ -44,8 +53,8 @@ export default async function AboutPage() {
                     key={i}
                     className={
                       i === 0
-                        ? "display-serif text-2xl leading-snug md:text-3xl"
-                        : "text-base leading-relaxed text-muted"
+                        ? "display-serif text-3xl leading-[1.2] text-ink md:text-4xl"
+                        : "text-base leading-[1.8] text-muted"
                     }
                   >
                     {p}
@@ -55,6 +64,12 @@ export default async function AboutPage() {
                 <p className="text-muted">Sadržaj još nije unesen.</p>
               )}
             </div>
+
+            {detail2 && (
+              <div className="relative mt-12 aspect-[3/2] w-full overflow-hidden bg-line/40">
+                <BlurImage src={detail2} alt="" fill sizes="(max-width: 768px) 100vw, 45vw" className="object-cover" />
+              </div>
+            )}
           </Reveal>
         </div>
       </div>

@@ -1,328 +1,239 @@
 # HANDOFF — Portfolio sajt za fotografa
 
-> Dokument za novu sesiju / novog developera. Sadrži cijelo stanje projekta,
-> arhitekturu, gdje šta stoji, kako se pokreće, šta je urađeno, šta zna da zezne
-> i šta su sljedeći koraci. Piše se na dan **2026-08-30**.
+> Živi dokument za novu sesiju / novog developera. Trenutno stanje projekta,
+> arhitektura, nove komponente, kako se pokreće, šta je urađeno i šta zna da zezne.
+> Ažurirano: **2026-09-01**.
 
 ---
 
-## 1. Šta gradimo (ukratko)
+## 1. Šta gradimo
 
 Portfolio web sajt za **jednog** fotografa (jezik: srpski/crnogorski, jednojezično).
+Veoma moderan, editorial/luksuzni stil (referenca: high-end „Showit" template-i za fotografe).
 Dva dijela u istom Next.js appu + odvojen Spring Boot backend:
 
-1. **Prezentacioni (javni) sajt** — landing sa najboljim radovima, galerija svih
-   radova, kategorije, „O meni", kontakt. Mora biti **veoma moderan i interaktivan**
-   (editorial/luksuzni stil). Dizajn inspiracija: **daniloandsharon.com**.
-2. **Administracija** (`/admin`) — jedan admin nalog. Upload radova, uređivanje
-   rasporeda, kategorije (+ potkategorije), cover slike, istaknuti (featured) radovi,
-   sadržaj „O meni", podešavanja (kontakt/hero), inbox poruka. Funkcionalnost >
-   estetika, ali je urađen čisto i **mobile responsive**.
+1. **Javni sajt** — hero, izabrani radovi, portfolio (kategorije), „O meni", kontakt.
+2. **Admin** (`/admin`) — jedan nalog, upload radova, kategorije, cover/featured, „O meni",
+   podešavanja, inbox poruka. Funkcionalnost > estetika, mobile responsive.
 
-**Potvrđene odluke:**
-- Monorepo: `frontend/` (Next.js) + `backend/` (Spring Boot). Dva odvojena foldera.
-- Jedan admin nalog, JWT auth (bez `users` tabele).
-- Slike na **Cloudflare R2** (S3-kompatibilan API), serviraju se sa javnog R2 domena.
-- Baza: **Supabase** (PostgreSQL), konekcija preko **Session pooler** (port 5432).
-- Deploy: **backend → Render**, **frontend → Vercel**.
+**Potvrđene odluke:** monorepo `frontend/` (Next.js) + `backend/` (Spring Boot); jedan admin
+nalog + JWT (bez `users` tabele); slike na **Cloudflare R2** (serviraju se sa javnog R2 domena);
+baza **Supabase** (Session pooler, port 5432); deploy **backend → Render**, **frontend → Vercel**.
 
 ---
 
-## 2. Tech stack (stvarne verzije)
+## 2. Tech stack
 
-**Backend** (`backend/pom.xml`):
-- Java 21, Spring Boot 3.3.5, Maven.
-- Spring Web, Data JPA/Hibernate, Security, Validation.
-- PostgreSQL driver, **Flyway** (migracije upravljaju šemom; `ddl-auto: none`).
-- JWT: `io.jsonwebtoken:jjwt` 0.12.6.
-- R2: AWS SDK v2 `software.amazon.awssdk:s3`.
-- Thumbnails: `net.coobird:thumbnailator`.
-- `spring-dotenv` (učitava `backend/.env`), `springdoc-openapi` (Swagger).
+**Frontend** (`frontend/package.json`): Next.js **14.2.15** (App Router), React 18.3, TS 5.6,
+Tailwind 3.4, `framer-motion` 11, `lenis` (smooth scroll), `yet-another-react-lightbox` 3, `clsx`.
+Fontovi (next/font/google): **Space Grotesk** (naslovi/brend, var `--font-serif`) + **Inter**
+(tekst, `--font-sans`). Bez kurziva/italic display fonta (odluka vlasnika).
 
-**Frontend** (`frontend/package.json`):
-- Next.js **14.2.15** (App Router), React 18.3, TypeScript 5.6.
-- Tailwind CSS 3.4, `framer-motion` 11, `lenis` (smooth scroll),
-  `yet-another-react-lightbox` 3, `react-hook-form` 7, `clsx`.
+**Backend** (`backend/pom.xml`): Java 21, Spring Boot 3.3.5, Maven. Web, JPA/Hibernate, Security,
+Validation, PostgreSQL, **Flyway** (`ddl-auto: none`), JWT (jjwt 0.12.6), AWS SDK v2 S3 (R2),
+Thumbnailator, spring-dotenv, springdoc (Swagger).
+
+> **Java/Maven NISU na PATH-u** u shell-u — backend se diže iz **IntelliJ-a** (JDK 21).
 
 ---
 
-## 3. Struktura repozitorijuma
+## 3. Struktura (frontend/src)
 
 ```
-AplikacijaZaFotografe/
-├── HANDOFF.md                  # ovaj fajl
-├── .claude/launch.json         # dev server config (frontend, autoPort, cwd: frontend)
-├── backend/
-│   ├── pom.xml
-│   ├── Dockerfile              # Render build (maven:3.9-temurin-21 → temurin-21-jre)
-│   ├── .env                    # PRAVE TAJNE (git-ignored) — vidi sekciju 8
-│   ├── .env.example
-│   └── src/main/
-│       ├── java/com/fotograf/portfolio/
-│       │   ├── PortfolioApplication.java
-│       │   ├── config/         # SecurityConfig, R2Config, OpenApiConfig
-│       │   ├── domain/         # Category, Photo, AboutContent, SiteSettings, ContactMessage
-│       │   ├── repository/     # Spring Data JPA repo-i
-│       │   ├── dto/            # request/response DTO-ovi
-│       │   ├── service/        # PhotoService, CategoryService, StorageService, ContentService, ContactService, DtoMapper, Slugify
-│       │   ├── security/       # JwtService, JwtAuthFilter, AdminAuthService
-│       │   ├── exception/      # NotFound/BadRequest + GlobalExceptionHandler
-│       │   └── web/            # PublicController, AuthController, web/admin/*
-│       └── resources/
-│           ├── application.yml
-│           └── db/migration/   # V1__init.sql, V2__category_parent.sql
-└── frontend/
-    ├── next.config.mjs         # images.remotePatterns (r2.dev, r2.cloudflarestorage.com, unsplash, picsum)
-    ├── tailwind.config.ts      # dizajn tokeni (cream/ink paleta, fontovi, ease-editorial)
-    ├── .env.local.example
-    └── src/
-        ├── app/
-        │   ├── layout.tsx      # root layout (fontovi, Grain, Cursor, SmoothScroll)
-        │   ├── (site)/         # JAVNI sajt (route group)
-        │   │   ├── layout.tsx  # Header + Footer + ScrollProgress
-        │   │   ├── page.tsx    # landing
-        │   │   ├── galerija/page.tsx
-        │   │   ├── kategorije/page.tsx + kategorije/[slug]/page.tsx
-        │   │   ├── o-nama/page.tsx
-        │   │   └── kontakt/page.tsx
-        │   └── admin/          # ADMIN (NIJE route group — realan /admin prefiks)
-        │       ├── layout.tsx  # AdminAuth wrapper + AdminShell
-        │       ├── login/page.tsx
-        │       ├── page.tsx    # dashboard/pregled
-        │       ├── radovi/page.tsx
-        │       ├── kategorije/page.tsx
-        │       ├── o-nama/page.tsx
-        │       ├── podesavanja/page.tsx
-        │       └── poruke/page.tsx
-        ├── components/
-        │   ├── site/           # Header, Footer, Hero, FeaturedWorks, CategoryGrid,
-        │   │                   # GalleryExplorer, PhotoGallery, CategoryShowcase,
-        │   │                   # ParallaxImageQuote, MaskReveal, Reveal, Interactive,
-        │   │                   # SmoothScroll, Cursor, Grain, ScrollProgress, ContactForm
-        │   └── admin/          # AdminShell, AdminAuth, ui, ImagePicker,
-        │                       # FeaturedPicker, CategorySelect
-        └── lib/
-            ├── api.ts          # javni fetch + demo fallback
-            ├── adminApi.ts     # admin fetch (JWT iz localStorage)
-            ├── auth.ts         # getToken/setToken/clearToken (localStorage)
-            ├── demo.ts         # demo podaci (Unsplash) kad backend nedostupan/prazan
-            ├── categories.ts   # buildTree, slugsOf, photosIn helperi
-            └── types.ts        # TS tipovi (Photo, Category, Home, About, ...)
+app/
+  layout.tsx           # root: fontovi (Space Grotesk + Inter), globalni SEO metadata (metadataBase, OG, robots)
+  robots.ts            # /robots.txt (disallow /admin, sitemap)
+  sitemap.ts           # /sitemap.xml (statične rute + kategorije, dinamički)
+  globals.css          # tokeni, .display-serif (grotesk, uspravno), .eyebrow, iris-open keyframes, masonry, lenis
+  (site)/
+    layout.tsx         # SmoothScroll + CameraIntro + ScrollProgress + Grain + Cursor + FloatingContact + Header + Footer + JsonLd
+    page.tsx           # POČETNA (nova struktura, vidi §5)
+    galerija/, kategorije/[slug]/, o-nama/, kontakt/  # ostale stranice
+  admin/               # admin (nepromijenjen ove sesije)
+components/site/
+  PortfolioHero.tsx    # NOVI hero (slika + ime + citat + CTA), zamijenio ContactMasthead
+  FeaturedRow.tsx      # 3 fotografije u redu (zamijenio veliki kolaž FeaturedWorks)
+  SectionHeader.tsx    # editorial zaglavlje sekcije (hairline + broj 01/02/03 + naslov + link)
+  CameraIntro.tsx      # intro: crno → „skidanje poklopca" (iris) → fokus → blic → reveal
+  InlineContactForm.tsx# „pismo" forma (label + podvučena praznina) + dropdown + date picker
+  CameraDatePicker.tsx # custom „kamera" date picker (viewfinder, iris, HUD, blic na odabir)
+  Typewriter.tsx       # kucanje teksta (koristi se za naslov u ContactMasthead-u — sad NEAKTIVNO)
+  BlurImage.tsx        # omotač oko next/image sa blur placeholderom (pravi LQIP ili fallback)
+  JsonLd.tsx           # structured data <script type=ld+json>
+  FloatingContact.tsx  # suptilan „Kontaktirajte nas" pill (dole desno, nakon skrola)
+  Header.tsx           # adaptivni transparentni header (vidi §6)
+  Footer.tsx           # tamni footer + kontakt info + jednostavna ContactForm
+  ContactForm.tsx      # jednostavna forma (light/dark, compact) — koristi se u footeru
+  Grain.tsx, Cursor.tsx, ScrollProgress.tsx, SmoothScroll.tsx, MaskReveal.tsx, Reveal.tsx,
+  Hero.tsx, ContactMasthead.tsx, PortfolioMasthead.tsx, FeaturedWorks.tsx, ParallaxImageQuote.tsx,
+  CategoryGrid.tsx, CategoryShowcase.tsx, GalleryExplorer.tsx, PhotoGallery.tsx, Interactive.tsx
+lib/
+  api.ts        # javni fetch + demo fallback + 12s timeout (Render cold-start)
+  intro.ts      # koordinacija intro↔sadržaj (revealIntro / useIntroReveal)
+  scroll.ts     # smoothScrollTo (koristi window.__lenis), izloženo iz SmoothScroll
+  media.ts      # FALLBACK_BLUR (svg data-uri) + photoAlt()
+  seo.ts        # SITE_URL, SITE_NAME, DEFAULT_DESCRIPTION, pageMetadata()
+  categories.ts, types.ts, demo.ts, adminApi.ts, auth.ts
 ```
 
----
-
-## 4. Backend — detalji
-
-### Domenski model
-- **Category** — `id, name, slug (unique), description?, coverPhoto (FK→Photo, nullable),
-  displayOrder, parent (FK→Category, self-ref, nullable), createdAt, updatedAt`.
-  - **Potkategorije**: `parent_id` self-reference. **Samo jedan nivo** (parent mora
-    biti top-level; potkategorija ne može imati svoju potkategoriju — validira se u
-    `CategoryService.resolveParent()`). FK `ON DELETE SET NULL`.
-- **Photo** — `id, title?, description?, category (FK), objectKey (R2 original),
-  thumbnailKey (R2 thumb), width, height, featured (bool), displayOrder, createdAt,
-  updatedAt`.
-- **AboutContent** (singleton) — `heading, body, portraitKey`.
-- **SiteSettings** (singleton) — kontakt, hero landinga, socijalne mreže, editorial kopija.
-- **ContactMessage** — poruke iz kontakt forme (inbox u adminu; bez slanja mejla).
-
-### Migracije (Flyway, `db/migration/`)
-- `V1__init.sql` — sve tabele.
-- `V2__category_parent.sql` — `ALTER TABLE categories ADD COLUMN parent_id BIGINT`
-  + FK `fk_category_parent` ON DELETE SET NULL + index.
-- **Nova promjena šeme = novi `V3__...sql`.** Ne dirati postojeće migracije.
-
-### REST API
-**Javni** (`/api/public/**`, bez auth):
-`GET /home`, `GET /photos` (`?categoryId=`, `?featured=true`), `GET /categories`,
-`GET /categories/{slug}`, `GET /about`, `GET /contact`, `POST /contact`.
-
-**Auth:** `POST /api/auth/login` → JWT.
-
-**Admin** (`/api/admin/**`, JWT):
-- Photos: `POST` (multipart upload → R2 + thumbnail), `GET/PUT/DELETE /{id}`,
-  `PATCH .../featured`, reorder.
-- Categories: `GET/POST/PUT/DELETE`, set cover, reorder.
-- Content: `PUT /about` (+ portret upload), `PUT /site-settings`.
-- Contact: `GET` poruke.
-
-### R2 (StorageService)
-- Upload: primi multipart → pročitaj dimenzije → generiši thumbnail → uploaduj
-  original + thumb na R2 → sačuvaj ključeve + width/height.
-- **VAŽNO (već popravljeno):** thumbnaili se **UVIJEK** snimaju kao **JPEG**. Za PNG sa
-  alfa kanalom, alfa se „spljošti" na bijelu pozadinu (`BufferedImage TYPE_INT_RGB` +
-  `Graphics2D` fill white pa drawImage) prije `Thumbnails.of(source).outputFormat("jpg")`.
-  Thumb ključ = `base + "_thumb.jpg"`. (Razlog: raniji PNG thumb-ovi su bili crni/lomili se.)
-- Serviranje: slike idu **direktno sa R2 javnog domena** (`public-base-url`), ne kroz Spring.
-  DTO vraća pune URL-ove.
-
-### Sigurnost / CORS
-- `SecurityConfig` koristi `setAllowedOriginPatterns(...)` (NE `setAllowedOrigins`) da bi
-  `*` radio zajedno sa credentials. CORS origini iz `APP_CORS_ORIGINS` (trenutno `*` za dev).
-- `R2Config` je tolerantan na prazne R2 kredencijale (koristi „not-configured" placeholder
-  da se app digne i bez R2 konfiguracije).
+> **Neaktivne (ali još u repou) komponente:** `ContactMasthead`, `PortfolioMasthead`, `Hero`,
+> `FeaturedWorks`, `ParallaxImageQuote`, `Typewriter`, `Interactive.Marquee/Counter`. Ostavljene
+> jer se lako mogu vratiti; slobodno obrisati pri čišćenju.
 
 ---
 
-## 5. Frontend — detalji
+## 4. Backend — sažetak
 
-### Dizajn sistem (`tailwind.config.ts` + `app/layout.tsx`)
-- Paleta: **cream `#F6F3EE`** / **ink `#14110E`**, `line`, `muted` akcenti.
-- Fontovi: **Playfair Display** (serif italik, display naslovi), **Oswald** (uppercase
-  kondenzovani), **Inter** (tekst). Utility klase: `display-serif`, `eyebrow`.
-- `ease-editorial` custom bezier; duge, spore tranzicije.
-- Globalni efekti (root layout): `Grain` (film grain overlay), `Cursor` (custom „Vidi" ring),
-  `SmoothScroll` (Lenis).
+Domenski model: **Category** (self-ref `parent_id`, jedan nivo potkategorija), **Photo**,
+**AboutContent** (singleton), **SiteSettings** (singleton), **ContactMessage**.
 
-### Ključne javne komponente
-- **Header.tsx** — minimalan; numerisana nav + full-screen overlay meni sa kontakt blokom.
-- **Hero.tsx** — full-bleed hero + veliki display naslov.
-- **FeaturedWorks.tsx** — **masonry kolaž** (`columns-1 sm:columns-2 xl:columns-3`), svaka
-  slika u prirodnom aspektu (`break-inside-avoid`, `h-auto w-full`), hover caption, lightbox.
-  Ovo je nekoliko puta redizajnirano na zahtjev korisnika — sada je finalno (kolaž, bez
-  kropovanja portreta preko cijele širine).
-- **CategoryGrid.tsx / CategoryShowcase.tsx** — image-forward prikaz kategorija.
-- **GalleryExplorer.tsx** — dvonivovski filter (parent → subcat) za galeriju.
-- **ParallaxImageQuote.tsx**, **MaskReveal.tsx** (clip-path inset reveal), **Reveal.tsx**,
-  **ScrollProgress.tsx**.
-- **Cursor.tsx** — prsten „Vidi" se prikazuje **samo** iznad elemenata sa `data-cursor="view"`.
-  Globalni `cursor: none` je uklonjen (da se cursor vidi u lightbox-u); `cursor: none` je samo
-  na `[data-cursor="view"]` elementima.
-- **Interactive.tsx** — Marquee/Counter/Magnetic (Marquee i Counter trenutno NISU u upotrebi).
+**R2 upload** (`StorageService`): original + JPEG thumbnail (providne slike spljošti na bijelu)
++ **`blurDataUrl`** (mali ~24px base64 JPEG za LQIP). Slike se serviraju direktno sa R2 domena.
 
-### Admin komponente
-- **AdminShell.tsx** — **mobile responsive** (najskorije urađeno): desktop bočni meni
-  (`hidden md:flex`), mobilna gornja traka sa hamburgerom + slide-in drawer (overlay,
-  zatvara se na klik van / promjenu rute; `body overflow hidden` dok je otvoren).
-- **AdminAuth.tsx** — štiti admin rute (redirect na `/admin/login` bez tokena).
-- **ImagePicker.tsx** — modal za izbor jedne slike (cover/hero).
-- **FeaturedPicker.tsx** — modal za multi-izbor istaknutih (amber ivica + ★).
-- **CategorySelect.tsx** — kaskadni dropdown (parent → „— cijela [kategorija] —" + potkategorije).
-- `radovi/page.tsx` — lista + multi-file drag&drop upload (ime fajla → naziv rada ako nije unesen),
-  filteri (kategorija + pretraga po imenu), reorder, featured toggle. PhotoRow je responsive
-  (thumbnail+sadržaj i akciona dugmad se slažu/prelamaju na mobilnom).
-- `kategorije/page.tsx` — ParentGroup (parent + collapsible potkategorije), grupisani reorder
-  (moveParent/moveChild), CreateForm sa parent selectom. CategoryRow responsive.
-- `o-nama/page.tsx` — portret se auto-uploaduje na izbor fajla (local preview + „Otpremam…" overlay).
+**Migracije** (`db/migration/`): `V1__init.sql`, `V2__category_parent.sql`,
+**`V3__photo_blur.sql`** (dodaje `blur_data_url TEXT` na `photos`). Nova šema = novi `V4__...`.
 
-### API sloj (`lib/api.ts`)
-- `const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"`.
-- **Demo fallback**: ako fetch padne ILI backend vrati prazno, koristi `demo.ts` (Unsplash
-  slike + parent/sub kategorije). Zato sajt uvijek izgleda popunjeno, ali **demo podaci =
-  znak da backend nije dostupan ili je baza prazna**.
-- `revalidate: 30` (ISR).
+**API:** javni `/api/public/**` (`/home`, `/photos`, `/categories`, `/categories/{slug}`, `/about`,
+`/contact` GET+POST), auth `POST /api/auth/login`, admin `/api/admin/**` (JWT).
+
+> **PhotoDto sad ima `blurDataUrl`.** Postojeće slike (uploadovane prije V3) imaju null → frontend
+> koristi elegantni fallback blur; novi uploadi dobijaju pravi LQIP.
 
 ---
 
-## 6. Kako pokrenuti lokalno
+## 5. POČETNA (nova struktura ove sesije)
 
-**Frontend** (preko launch.json, `autoPort: true`):
-```bash
-cd frontend && npm install && npm run dev
-```
-(U Claude Code: `preview_start` sa `{name: "frontend"}`.)
+Redoslijed: **Hero → Izabrani radovi (3 slike) → O meni (kratko) → Portfolio → CTA → Footer.**
 
-**Backend** — korisnik ga diže iz **IntelliJ** (potrebna **JDK 21**; Java/Maven NISU na PATH-u
-u shell-u, pa `mvn` iz terminala ne radi). Alternativa: `./mvnw spring-boot:run` iz IntelliJ
-terminala. Swagger: `http://localhost:8080/swagger-ui.html`. Backend sluša na **8080**.
+1. **`PortfolioHero`** — full-screen fotografija + metapodaci + veliko ime studija (naslov, slova
+   se dižu iz maske) + citat + „Kontaktirajte nas" dugme + scroll cue. `data-header-theme="dark"`.
+   Ulazne animacije čekaju intro reveal (`useIntroReveal`). *(Ovo je bio raniji „drugi ekran";
+   stari kontakt-form hero i sticky crossfade su UKLONJENI.)*
+2. **Izabrani radovi** (`SectionHeader 01` + `FeaturedRow`) — **3 fotografije u redu**, klik → lightbox.
+3. **O meni** (`SectionHeader 02`) — portret + par rečenica + „Saznaj više" → `/o-nama`.
+4. **Portfolio** (`SectionHeader 03` + `CategoryGrid`) — kategorije kao slikovne pločice.
+5. **CTA** (tamna, `data-header-theme="dark"`) — veliki „Kontaktirajte nas" → `/kontakt`.
 
-> Kad backend NIJE upaljen: frontend na `localhost:8080` dobije `ECONNREFUSED` → prikazuje
-> demo podatke. To je očekivano ponašanje, nije bug.
-
----
-
-## 7. Deploy
-
-- **Backend → Render** (Docker, `backend/Dockerfile`). Sve tajne se postavljaju kao
-  **Environment Variables na Render-u** (ne iz `.env` fajla).
-- **Frontend → Vercel.**
-  - **`NEXT_PUBLIC_API_URL`** mora biti postavljen na javni URL Render backend-a (npr.
-    `https://<app>.onrender.com`). Ovo je **build-time inline-ovano** i vidljivo u browseru
-    → na Vercel-u koristiti tip **Config**, NE **Secret** (nije tajna; browser je mora vidjeti).
-    Ako nije postavljen, defaultuje na `localhost:8080` → prod povlači demo podatke.
-  - Nakon promjene env var-a → **redeploy** je obavezan (build-time varijabla).
-- **Supabase**: Session pooler string, `sslmode=require`, port 5432.
-
-### ⚠️ Provjeriti na Render-u (moguć problem)
-`Dockerfile` ima `EXPOSE 10000`, a `application.yml` ima **hardkodovan `server.port: 8080`**.
-Render obično injektuje `PORT` env i očekuje da app sluša na njemu. Ako backend na Render-u
-„ne odgovara", najvjerovatnije je **port mismatch** — riješiti tako što se u `application.yml`
-stavi `server.port: ${PORT:8080}` (ili postaviti Render da probe-uje 8080). **Nije još potvrđeno
-da je ovo problem — samo provjeriti prvo ako je Render backend nedostupan.**
+Kontakt forma više NIJE u hero-u; živi na **`/kontakt`** (prostrano) i u **footeru** (jednostavna).
 
 ---
 
-## 8. Tajne / sigurnost (VAŽNO)
+## 6. Ključni sistemi
 
-- **`backend/.env` sadrži PRAVE tajne** (DB lozinka, R2 access/secret ključevi) i **NIJE**
-  commit-ovan (u `.gitignore`).
-- **ALI `backend/src/main/resources/application.yml` trenutno ima HARDKODOVANE PRAVE TAJNE**
-  (DB password `DYIoazIP6MKdI3WE`, R2 secret key, admin password `test123`). Ovo je korisnik
-  sam ostavio radi lakšeg lokalnog rada.
-  - **RIZIK:** ako se ovaj repo gurne na javni GitHub, tajne cure.
-  - **Preporuka (više puta rečeno korisniku):** prije push-a na GitHub prebaciti sve vrijednosti
-    u `.env` / env varijable i u `application.yml` ostaviti samo `${ENV_VAR}` placeholder-e
-    (kao što su zakomentarisane linije na vrhu fajla). Rotirati ključeve ako su već procurili.
-- Admin kredencijali: `admin` / `test123` (dev). Za prod postaviti `ADMIN_PASSWORD_HASH` (BCrypt).
-- JWT se čuva u **localStorage** na frontendu (`lib/auth.ts`).
+### Intro animacija (`CameraIntro`, u `(site)/layout.tsx`)
+Crni ekran (poklopac na objektivu) → **iris otvaranje** (CSS `iris-open`, kreće na prvom paint-u
+pa NEMA zamrznutog kadra) → fotografija „lovi fokus" (mutno→oštro) → **fokus zaključan** → **blic**
+→ otkriva se stranica; `revealIntro()` pušta `useIntroReveal` pa sadržaj tek tad ulazi (naslov se
+mask-reveal-uje). Overlay se renderuje i na serveru (nema bljeska sadržaja prije animacije).
+Vođen `setTimeout`-om (ne rAF) pa se **uvijek pouzdano ukloni**; forsira scroll na vrh na kraju.
+**Igra pri SVAKOM učitavanju** (nema više „jednom po sesiji"). `prefers-reduced-motion` → preskače.
+Slika = ista kao hero (`home.heroUrl ?? featured[0]`).
 
----
+### Adaptivni header (`Header`)
+Uvijek **transparentan**, sa **jasno vidljivom donjom linijom** (adaptivna boja). Boja teksta prati
+sekciju ispod: sekcije sa `data-header-theme="dark"` → svijetli (cream) tekst; sve ostalo → tamni
+(ink). Detekcija: na scroll/resize/route-change gleda koja `[data-header-theme="dark"]` sekcija
+prelazi liniju na ~34px. Default `dark=true` (hero je taman). **Za nove tamne sekcije dodati
+`data-header-theme="dark"`** (trenutno: hero, CTA, `kategorije/[slug]` hero).
 
-## 9. Riješeni problemi (da se ne ponavljaju)
+### Forme
+- **`InlineContactForm`** (na `/kontakt` i, po potrebi, gdje god treba glavna forma): „pismo" stil —
+  mala uppercase labela iznad **podvučene praznine pune širine**, centrirano. Polja: ime,
+  **usluga (custom dropdown)**, **datum (`CameraDatePicker`)**, lokacija, email. Šalje
+  `{name, email, message}` (usluga/lokacija/datum sažima u `message`).
+- **`CameraDatePicker`** — klik otvara **tamni viewfinder** (iris, ugaone zagrade, HUD `f/1.4 · 1/200s`),
+  navigacija mjeseci, izabrani datum kao **retro date-stamp** (accent), **blic na odabir** dana.
+  Popover se **računa i clamp-uje u viewport** (ne ispada iz ekrana).
+- **`ContactForm`** — jednostavna (footer), `tone` light/dark + `compact`.
 
-- **„JVM target 5" compile error** (IntelliJ na JDK 26) → instalirati/izabrati **JDK 21** kao
-  project SDK, reimport Maven.
-- **„Driver claims to not accept jdbcUrl"** (Flyway) → bio malformiran Supabase URL; ispravan
-  format je session pooler `jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`.
-- **„Access key ID cannot be blank"** (S3Client bean) → `R2Config` sada tolerira prazne kredencijale.
-- **Next HMR lomovi** (`Cannot find module './78.js'`, `StaggerLines is not defined`,
-  `Cannot read properties of undefined (reading 'call')`) → posljedica pokretanja
-  `npm run build` DOK dev server radi (pokvari `.next` keš). **NIKAD ne pokretati production
-  build dok dev server radi.** Fix: ugasiti server, `rm -rf .next`, ponovo `npm run dev`.
-- **Cursor nestajao u lightbox-u** → uklonjen globalni `cursor: none`; sada samo na
-  `[data-cursor="view"]`.
-- **Portret preko cijele širine ružan** → FeaturedWorks prebačen na masonry kolaž.
-- **Vercel povlači demo podatke** → `NEXT_PUBLIC_API_URL` nije bio postavljen (default localhost).
+### SEO paket
+`app/sitemap.ts`, `app/robots.ts`, `lib/seo.ts` (`pageMetadata()` helper). Root `layout.tsx` ima
+`metadataBase` + title template + OG/Twitter default + robots. Po stranici: canonical + OG (početna
+i `kategorije/[slug]` imaju dinamičku OG sliku). **JSON-LD** (`WebSite` + `LocalBusiness`) u
+`(site)/layout.tsx`. Bolji `alt` tekstovi (`photoAlt`). Admin je `noindex`.
+> **Postaviti `NEXT_PUBLIC_SITE_URL` na Vercel-u** (Config, ne Secret) + redeploy — inače canonical/OG/
+> sitemap pokazuju `localhost:3000`.
 
-### Gotchas za preview/verifikaciju
-- Screenshot-ovi često time-out-uju ili izgledaju prazno (spore demo Unsplash slike +
-  mask-reveal animacije + backend down). **Pouzdanije: DOM inspekcija preko `read_page` /
-  `javascript_tool` umjesto screenshot-a.**
+### Blur / LQIP (`BlurImage` + `lib/media.ts`)
+Sve slike prolaze kroz `BlurImage` (next/image + `placeholder="blur"`). Ako foto ima `blurDataUrl`
+sa backenda → pravi LQIP; inače neutralni SVG fallback (`FALLBACK_BLUR`). Galerija nikad nije prazna
+dok se slike učitavaju.
 
----
-
-## 10. Trenutno stanje
-
-- **Frontend:** radi i verifikovan (i mobilno, 375px).
-- **Backend:** korisnik ga gradi/pokreće iz IntelliJ-a; povezan sa Supabase + R2; uploadovano
-  ~12 pravih fotografija. End-to-end provjereno lokalno (R2 slike učitavaju 200, next/image
-  optimizer radi, CORS radi, admin CRUD radi).
-- **Deploy:** backend na Render, frontend na Vercel. U toku je podešavanje da Vercel povuče
-  prave podatke (`NEXT_PUBLIC_API_URL` = Config + redeploy, + probuditi Render backend).
-- **Zadnji urađen task:** admin panel mobile responsive (AdminShell hamburger drawer +
-  responsive redovi u Radovi/Kategorije). `tsc` prolazi.
+### Smoothness skrola
+- **Grain** = jeftin **statični tiled-noise** (bez živog SVG filtera i bez mix-blend-a — to je bio
+  glavni uzrok jank-a), opacity ~0.12.
+- **Lenis** na `lerp: 0.1` režimu; masthead/hero slika `will-change: transform`.
 
 ---
 
-## 11. Nema otvorenih (pending) taskova
+## 7. Kako pokrenuti
 
-Nema eksplicitno otvorenih zadataka. Deployment fine-tuning (Vercel env + Render port) je u
-rukama korisnika. Prije bilo kakvog novog rada — sačekati instrukciju korisnika.
+**Frontend:** `cd frontend && npm install && npm run dev` (u Claude Code: `preview_start {name:"frontend"}`).
+Autoport (traži 3000, pa slobodan port). `.env.local` trenutno gađa **Render backend** (prave slike
+bez IntelliJ-a) — vidi `.env.local.example`.
 
-### Ideje za dalje (nije naručeno — samo prijedlozi)
-- Provjeriti/riješiti Render port mismatch (sekcija 7).
-- Izmjestiti tajne iz `application.yml` prije GitHub push-a (sekcija 8).
+**Backend:** iz IntelliJ-a (JDK 21). Swagger: `http://localhost:8080/swagger-ui.html`.
+
+---
+
+## 8. Deploy / env
+
+- **Backend → Render** (Docker). Prave tajne kao Env Vars na Render-u. Live API:
+  **`https://photography-portfolio-5pp5.onrender.com`**.
+  ⚠️ **Render free tier „spava"** — prvi zahtjev nakon neaktivnosti je cold start (~60–90s, izmjereno i 153s).
+  Frontend fetch ima **12s timeout** pa ne visi 150s (padne na demo dok se backend budi).
+  Za produkciju razmisliti o **keep-warm cron ping-u**.
+- **Frontend → Vercel.** `NEXT_PUBLIC_API_URL` = Render URL (Config), `NEXT_PUBLIC_SITE_URL` = domen.
+  Oba su build-time inline-ovana → **redeploy nakon promjene**.
+- **Supabase:** Session pooler, `sslmode=require`, port 5432.
+
+---
+
+## 9. Poznata ograničenja / gotchas
+
+- **Screenshot/verifikacija u skrivenom Browser pane-u:** browser pauzira `requestAnimationFrame`
+  dok je pane skriven → **framer animacije i scroll-vođene vrijednosti stoje** na screenshot-ovima
+  (izgledaju „zamrznuto"). Nije bug u kodu — vidi se normalno kod korisnika. Za verifikaciju: DOM
+  inspekcija (`read_page`/`javascript_tool`) ili privremeni „force-reveal" inline stilova. Skrol se
+  često ne pomjera programski (Lenis) → gasiti `window.__lenis` za test.
+- **Tajne u `backend/src/main/resources/application.yml`** (DB lozinka, R2 secret, admin `test123`)
+  su HARDKODOVANE (vlasnik ostavio radi lokalnog rada). **Prije javnog GitHub push-a prebaciti u
+  env varijable i rotirati ključeve.**
+- **NIKAD ne pokretati `npm run build` dok dev server radi** (kvari `.next` keš → HMR lomovi).
+- **CameraIntro igra na SVAKOM učitavanju svake stranice** (i /galerija itd.) — po zahtjevu; lako
+  se vrati „jednom po sesiji" (bila je `sessionStorage` zastavica).
+
+---
+
+## 10. Urađeno u ovoj sesiji (changelog)
+
+1. **Blur/LQIP** placeholderi (frontend `BlurImage` + backend `blur_data_url` V3) + bolji alt tekstovi.
+2. **SEO paket** (sitemap, robots, metadata/OG/Twitter, JSON-LD, canonical).
+3. **Fontovi:** Playfair/Oswald → **Space Grotesk + Inter** (bez kurziva).
+4. **CameraIntro** — kamera intro (crno → iris → fokus → blic → reveal), igra svaki put.
+5. **Kontakt-first hero** → kroz iteracije → **uklonjen**; početna sad otvara **PortfolioHero**.
+6. **Adaptivni transparentni header** (boja teksta prema sekciji + vidljiva linija).
+7. **Izabrani radovi:** veliki kolaž → **3 fotografije u redu** (`FeaturedRow`).
+8. **Forme:** „pismo" `InlineContactForm` + **custom `CameraDatePicker`** + dropdown usluge;
+   viewport-svjestan popover (ne ispada).
+9. **Sekcijski ritam:** `SectionHeader` (hairline + broj + naslov).
+10. **„Razgovarajmo" → „Kontaktirajte nas"** svuda.
+11. **Smoothness:** Grain optimizovan, Lenis lerp, will-change.
+12. **Render cold-start:** 12s fetch timeout; zabilježen live API URL.
+
+---
+
+## 11. Ideje / pending (nije naručeno)
+
+- Očistiti neaktivne komponente (§3).
+- Keep-warm cron za Render (cold start).
+- Izmjestiti tajne iz `application.yml` prije GitHub push-a.
 - Kontakt forma → opciono slanje mejla (trenutno samo snima u bazu).
-- Root `README.md` sa setup uputstvima (trenutno ne postoji).
-
----
+- Backfill `blurDataUrl` za postojećih ~12 slika (ili re-upload).
 
 ## 12. Konvencije rada sa korisnikom
 
-- Korisnik komunicira na **srpskom/crnogorskom**; odgovarati na istom jeziku.
-- Korisnik je vlasnik/jedini admin. Prezentacioni sajt = prioritet za dizajn; admin =
-  funkcionalnost prije estetike.
-- Kad se dovrši task: kratko potvrditi šta je urađeno + kako je verifikovano, pa sačekati
-  sljedeću instrukciju. Ne pokretati tangencijalni rad bez potvrde.
-```
+Komunikacija na **srpskom/crnogorskom**. Vlasnik = jedini admin, **jak profinjen editorial ukus**,
+ne voli „gimmick" efekte (marquee = „odvratno", ne praviti), ne voli kurziv. Prezentacioni sajt =
+prioritet za dizajn. Kad se dovrši task: kratko potvrditi šta je urađeno + kako je verifikovano,
+pa sačekati sljedeću instrukciju.

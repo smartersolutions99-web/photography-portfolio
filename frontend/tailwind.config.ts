@@ -9,11 +9,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#F6F3EE",
-        ink: "#14110E",
-        muted: "#6B6560",
-        line: "#DED8CF",
-        accent: "#9A7B4F",
+        // Topla „film / papir" paleta. Zadržavamo postojeća imena (cream/ink/muted/
+        // line/accent) da ne prepisujemo cijeli kod, ali s novim toplim vrijednostima,
+        // + nova imena za tamne editorial sekcije (olive/brown).
+        cream: "#F2EFE7", // dominantna ivory pozadina
+        surface: "#F7F4ED", // svjetlija površina (naizmjenične sekcije)
+        paper: "#EAE4D8", // topliji papir (akcenti pozadine)
+        ink: "#24231F", // primarni tekst (topla skoro-crna)
+        muted: "#767166", // sekundarni tekst
+        line: "#DAD3C6", // topla hairline linija
+        accent: "#7E6A54", // topli smeđe-taupe akcent
+        olive: "#66634B",
+        deepolive: "#454333", // tamna olive sekcija
+        taupe: "#857462",
+        brown: "#665548",
+        dark: "#26251F", // topla tamna (footer / final CTA)
       },
       fontFamily: {
         serif: ["var(--font-serif)", "system-ui", "sans-serif"],

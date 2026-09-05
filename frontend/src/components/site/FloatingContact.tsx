@@ -36,14 +36,10 @@ export function FloatingContact() {
           <Link
             href="/kontakt"
             data-cursor="view"
-            className="group flex items-center gap-2.5 rounded-full border border-ink/15 bg-cream/70 py-2.5 pl-4 pr-3.5 shadow-[0_8px_30px_rgba(20,17,14,0.08)] backdrop-blur-md transition-colors duration-500 hover:bg-ink"
+            className="group flex items-center gap-3 border border-ink/15 bg-cream/80 px-5 py-3 backdrop-blur-md transition-colors duration-500 hover:bg-ink"
             aria-label="Kontakt"
           >
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/70" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
-            </span>
-            <span className="eyebrow !text-[0.6rem] !text-ink transition-colors duration-500 group-hover:!text-cream">
+            <span className="eyebrow !text-[0.58rem] !text-ink transition-colors duration-500 group-hover:!text-cream">
               Kontaktirajte nas
             </span>
             <span className="text-ink transition-all duration-500 ease-editorial group-hover:translate-x-0.5 group-hover:text-cream">

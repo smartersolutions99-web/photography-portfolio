@@ -19,8 +19,8 @@ export default async function KategorijePage() {
       <div className="mx-auto max-w-[1400px]">
         <Reveal className="mb-14 md:mb-20">
           <p className="eyebrow">Pregled</p>
-          <h1 className="display-serif mt-3 text-5xl md:text-8xl">Kategorije</h1>
-          <p className="mt-4 max-w-xl text-muted">
+          <h1 className="display-caps mt-4 text-5xl leading-[0.95] md:text-8xl">Portfolio</h1>
+          <p className="prose-editorial mt-6">
             Svaka kategorija sadrži svoje potkategorije. Izaberi temu za detaljan pregled.
           </p>
         </Reveal>

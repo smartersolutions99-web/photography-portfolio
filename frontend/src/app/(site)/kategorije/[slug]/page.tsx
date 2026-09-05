@@ -47,7 +47,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
 
   return (
     <>
-      <section className="relative flex h-[70svh] min-h-[420px] items-end overflow-hidden bg-ink">
+      <section data-header-theme="dark" className="relative flex h-[70svh] min-h-[420px] items-end overflow-hidden bg-ink">
         {node.coverUrl && (
           <BlurImage
             src={node.coverUrl}
@@ -73,9 +73,9 @@ export default async function CategoryPage({ params }: { params: { slug: string 
               </>
             )}
           </div>
-          <h1 className="display-serif mt-3 text-5xl text-cream md:text-8xl">{node.name}</h1>
+          <h1 className="display-caps mt-3 text-5xl leading-[0.95] text-cream md:text-8xl">{node.name}</h1>
           {node.description && (
-            <p className="mt-4 max-w-xl text-sm text-cream/80 md:text-base">{node.description}</p>
+            <p className="mt-5 max-w-xl text-sm font-light leading-[1.7] text-cream/80 md:text-base">{node.description}</p>
           )}
         </div>
       </section>

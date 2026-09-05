@@ -7,7 +7,7 @@ import { useIntroReveal } from "@/lib/intro";
 import { smoothScrollTo } from "@/lib/scroll";
 import type { ContactInfo } from "@/lib/types";
 import { BlurImage } from "./BlurImage";
-import { ContactForm } from "./ContactForm";
+import { InlineContactForm } from "./InlineContactForm";
 import { Typewriter } from "./Typewriter";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -38,16 +38,17 @@ export function ContactMasthead({
   const ready = useIntroReveal();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
-  // Crossfade kontakt -> masthead
-  const contactOpacity = useTransform(scrollYProgress, [0, 0.16, 0.32], [1, 1, 0]);
-  const contactPe = useTransform(scrollYProgress, (v) => (v < 0.22 ? "auto" : "none"));
-  const mastheadOpacity = useTransform(scrollYProgress, [0.3, 0.5], [0, 1]);
-  const mastheadY = useTransform(scrollYProgress, [0.3, 0.55], [60, 0]);
-  const mastheadPe = useTransform(scrollYProgress, (v) => (v > 0.42 ? "auto" : "none"));
-  const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
-  // Suptilni zoom fotografije i produbljenje scrima za čitljivost mastheada
-  const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.14]);
-  const scrimExtra = useTransform(scrollYProgress, [0.1, 0.45], [0, 0.9]);
+  // Crossfade kontakt -> masthead: BRZ i sekvencijalan (forma nestane, pa masthead
+  // POTPUNO uđe) — malo skrola i masthead je solidan, bez zaglavljenog polu-stanja.
+  const contactOpacity = useTransform(scrollYProgress, [0, 0.08, 0.16], [1, 1, 0]);
+  const contactPe = useTransform(scrollYProgress, (v) => (v < 0.12 ? "auto" : "none"));
+  const mastheadOpacity = useTransform(scrollYProgress, [0.16, 0.3], [0, 1]);
+  const mastheadY = useTransform(scrollYProgress, [0.16, 0.34], [40, 0]);
+  const mastheadPe = useTransform(scrollYProgress, (v) => (v > 0.28 ? "auto" : "none"));
+  const cueOpacity = useTransform(scrollYProgress, [0, 0.07], [1, 0]);
+  // Suptilni zoom fotografije i jak scrim (da STUDIO bude čitljiv/solid, ne blijed)
+  const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
+  const scrimExtra = useTransform(scrollYProgress, [0.12, 0.3], [0, 0.95]);
 
   const rise = (delay: number) => ({
     initial: { opacity: 0, y: 20 },
@@ -56,10 +57,10 @@ export function ContactMasthead({
   });
 
   return (
-    <section ref={ref} className="relative h-[185vh] bg-ink lg:h-[195vh]">
+    <section ref={ref} className="relative h-[130vh] bg-ink lg:h-[138vh]">
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
         {/* Fotografija (ostaje zakačena) */}
-        <motion.div style={{ scale: imgScale }} className="absolute inset-0">
+        <motion.div style={{ scale: imgScale, willChange: "transform" }} className="absolute inset-0">
           {imageUrl && (
             <BlurImage src={imageUrl} alt="Fotografija iz portfolija" fill priority sizes="100vw" className="object-cover" />
           )}
@@ -108,7 +109,7 @@ export function ContactMasthead({
               <p className="eyebrow">Pošaljite upit</p>
               <p className="display-serif mt-1 text-2xl text-ink md:text-3xl">Zakažite termin</p>
               <div className="mt-5">
-                <ContactForm compact />
+                <InlineContactForm />
               </div>
             </motion.div>
           </div>

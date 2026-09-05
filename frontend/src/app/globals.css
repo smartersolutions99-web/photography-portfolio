@@ -3,21 +3,24 @@
 @tailwind utilities;
 
 :root {
-  /* --font-serif (grotesk za naslove) i --font-sans (Inter za tekst) postavlja
-     next/font preko klase na <html>; ne redefinišemo ih ovdje.
-     Brend/logo (display) koristi isti grotesk kao naslovi. */
-  --font-display: var(--font-serif, system-ui, sans-serif);
+  /* --font-serif (Cormorant Garamond, high-contrast serif za naslove) i
+     --font-sans (Inter za tekst) postavlja next/font preko klase na <html>.
+     Brend/logo (display) koristi isti serif kao naslovi. */
+  --font-display: var(--font-serif, Georgia, serif);
 }
 
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   background-color: theme("colors.cream");
   color: theme("colors.ink");
   font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 15px;
+  line-height: 1.7;
 }
 
 ::selection {
@@ -26,39 +29,58 @@ body {
 }
 
 @layer components {
-  /* Veliki naslov — moderni grotesk (Space Grotesk), uspravno, bez kurziva */
+  /* Veliki display naslov — high-contrast serif (Cormorant), uspravno, bez kurziva.
+     Serif ne voli negativni tracking kao grotesk — držimo blizu nule. */
   .display-serif {
-    font-family: var(--font-serif, system-ui, sans-serif);
+    font-family: var(--font-serif, Georgia, serif);
     font-style: normal;
     font-weight: 500;
-    line-height: 0.98;
-    letter-spacing: -0.02em;
+    line-height: 1;
+    letter-spacing: 0;
   }
 
   /* Alias — zadržan zbog kompatibilnosti (identičan kao .display-serif) */
   .display-serif-up {
-    font-family: var(--font-serif, system-ui, sans-serif);
+    font-family: var(--font-serif, Georgia, serif);
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: 0;
+  }
+
+  /* Uppercase brend/logo (serif, razmaknut) */
+  .display-cond {
+    font-family: var(--font-display, Georgia, serif);
+    text-transform: uppercase;
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: 0.22em;
+  }
+
+  /* Veliki uppercase serif naslov (za sekcije/hero) — profinjen razmak slova */
+  .display-caps {
+    font-family: var(--font-serif, Georgia, serif);
+    text-transform: uppercase;
     font-style: normal;
     font-weight: 500;
     line-height: 1;
-    letter-spacing: -0.02em;
-  }
-
-  /* Uppercase brend/logo (grotesk) */
-  .display-cond {
-    font-family: var(--font-display, system-ui, sans-serif);
-    text-transform: uppercase;
-    font-weight: 600;
-    line-height: 0.95;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.04em;
   }
 
   .eyebrow {
     font-family: var(--font-sans, system-ui, sans-serif);
     text-transform: uppercase;
-    letter-spacing: 0.28em;
-    font-size: 0.7rem;
+    letter-spacing: 0.26em;
+    font-size: 0.66rem;
     font-weight: 500;
+    color: theme("colors.muted");
+  }
+
+  /* Kontrolisana širina i ritam pasusa */
+  .prose-editorial {
+    max-width: 46ch;
+    font-size: 0.95rem;
+    line-height: 1.8;
     color: theme("colors.muted");
   }
 

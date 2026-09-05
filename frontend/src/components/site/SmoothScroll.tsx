@@ -18,9 +18,9 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     }
 
     const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.1,
       smoothWheel: true,
+      wheelMultiplier: 1,
       touchMultiplier: 1.6,
     });
     // Izloži instancu da programski smooth-scroll (npr. „scroll cue") koristi isti osjećaj

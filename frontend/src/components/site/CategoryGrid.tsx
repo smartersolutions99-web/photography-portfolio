@@ -40,22 +40,15 @@ export function CategoryGrid({ nodes }: { nodes: CategoryNode[] }) {
 
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-7">
               <p className="eyebrow !text-cream/60">{n.photoCount} radova</p>
-              <h3 className="display-serif mt-1 text-3xl text-cream md:text-4xl">{n.name}</h3>
+              <h3 className="display-serif mt-1 text-3xl text-cream md:text-5xl">{n.name}</h3>
               {n.children.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {n.children.map((c) => (
-                    <span
-                      key={c.id}
-                      className="rounded-full border border-cream/25 px-3 py-1 text-xs text-cream/85 backdrop-blur-sm transition-colors group-hover:border-cream/50"
-                    >
-                      {c.name}
-                    </span>
-                  ))}
-                </div>
+                <p className="mt-3 text-xs text-cream/70">
+                  {n.children.map((c) => c.name).join("  ·  ")}
+                </p>
               )}
             </div>
 
-            <span className="absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full border border-cream/30 text-cream/80 opacity-0 transition-all duration-500 group-hover:opacity-100">
+            <span className="absolute right-6 top-6 text-xl text-cream/80 opacity-0 transition-all duration-500 group-hover:translate-x-1 group-hover:opacity-100">
               →
             </span>
           </Link>
