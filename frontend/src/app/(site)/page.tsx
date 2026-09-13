@@ -116,7 +116,7 @@ export default async function HomePage() {
           <div className="mx-auto grid max-w-[1500px] items-center gap-10 md:grid-cols-3 md:gap-10">
             {/* Slika levo */}
             <Reveal className="order-1" y={0}>
-              <div className="relative aspect-[3/4] w-[75%] translate-x-[-15%] translate-y-[20%] overflow-hidden bg-line/40">
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-line/40 md:w-[75%] md:translate-x-[-15%] md:translate-y-[20%]">
                 <BlurImage
                   src={home.featured[0]?.url ?? ""}
                   alt="Fotografija"
@@ -146,7 +146,7 @@ export default async function HomePage() {
 
             {/* Slika desno */}
             <Reveal className="order-3" delay={0.2} y={0}>
-              <div className="relative ml-auto aspect-[3/4] w-2/3 translate-x-[25%] translate-y-[-31%] overflow-hidden bg-line/40">
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-line/40 md:ml-auto md:w-2/3 md:translate-x-[25%] md:translate-y-[-31%]">
                 <BlurImage
                   src={home.featured[1]?.url ?? ""}
                   alt="Fotografija"
@@ -162,7 +162,7 @@ export default async function HomePage() {
         {/* 01 — Studio / O meni */}
         <section
           id="sec-studio"
-          className="relative flex max-h-[120vh] flex-col justify-center overflow-hidden bg-ink px-5 py-10 md:h-[120vh] md:px-10 md:py-0"
+          className="relative flex flex-col justify-center overflow-hidden bg-ink px-5 py-16 md:max-h-[120vh] md:h-[120vh] md:px-10 md:py-0"
         >
           <Starfield />
           <FilmGrain />
@@ -291,7 +291,7 @@ export default async function HomePage() {
                         {/* Veliki, konturisani redni broj — editorijalni vodeni žig */}
                         <span
                           aria-hidden
-                          className={`display-serif pointer-events-none absolute bottom-2 select-none text-[7rem] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(246,243,238,0.45)] md:bottom-4 md:text-[11rem] ${
+                          className={`display-serif pointer-events-none absolute bottom-2 select-none text-[4.5rem] leading-none text-transparent [-webkit-text-stroke:1.5px_rgba(246,243,238,0.45)] md:bottom-4 md:text-[11rem] ${
                             cutoutOnRight ? "left-4 md:left-8" : "right-4 md:right-8"
                           }`}
                         >
@@ -299,19 +299,19 @@ export default async function HomePage() {
                         </span>
                       </div>
 
-                      {/* Cutout — tekst panel koji "izlazi" preko ivice slike (samo na desktopu, na mobilnom ostaje unutar okvira) */}
+                      {/* Cutout — na mobilnom panel ide ISPOD slike (blagi preklop, foto ostaje vidljiv); na desktopu "izlazi" preko ivice slike */}
                       <div
                         style={
                           {
-                            top: `${story.panelTop}%`,
                             borderLeftColor: story.accent,
                             "--story-accent": story.accent,
+                            "--panel-top": `${story.panelTop}%`,
                           } as React.CSSProperties
                         }
-                        className={`absolute z-10 w-[82%] max-w-xs -translate-y-1/2 border border-ink/10 border-l-2 bg-cream/95 p-6 shadow-[0_40px_90px_-25px_rgba(20,17,14,0.45)] backdrop-blur-sm transition-all duration-700 ease-out sm:w-[70%] sm:max-w-sm sm:p-8 md:w-[380px] md:p-10 md:group-hover:shadow-[0_50px_110px_-25px_rgba(20,17,14,0.55)] ${
+                        className={`relative z-10 -mt-10 w-[88%] max-w-sm border border-ink/10 border-l-2 bg-cream p-6 shadow-[0_20px_45px_-20px_rgba(20,17,14,0.35)] transition-all duration-700 ease-out sm:p-8 md:absolute md:top-[var(--panel-top)] md:mt-0 md:w-[380px] md:max-w-none md:-translate-y-1/2 md:p-10 md:shadow-[0_40px_90px_-25px_rgba(20,17,14,0.45)] md:group-hover:shadow-[0_50px_110px_-25px_rgba(20,17,14,0.55)] ${
                           cutoutOnRight
-                            ? "right-3 sm:right-4 md:right-0 md:translate-x-[22%] md:group-hover:translate-x-[19%]"
-                            : "left-3 sm:left-4 md:left-0 md:-translate-x-[22%] md:group-hover:-translate-x-[19%]"
+                            ? "ml-auto mr-3 sm:mr-6 md:right-0 md:left-auto md:mr-0 md:translate-x-[22%] md:group-hover:translate-x-[19%]"
+                            : "ml-3 sm:ml-6 md:left-0 md:right-auto md:ml-0 md:-translate-x-[22%] md:group-hover:-translate-x-[19%]"
                         }`}
                       >
                         <span className="eyebrow !text-ink/40">{`Priča 0${i + 1}`}</span>

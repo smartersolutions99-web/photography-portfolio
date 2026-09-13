@@ -217,6 +217,7 @@ export function PortfolioCamera({ photos }: { photos: Photo[] }) {
               e.preventDefault();
               releaseCharge(true);
             }}
+            onTouchCancel={() => releaseCharge(false)}
             aria-label="Drži da fokusiraš, pusti da okineš"
             className="group relative flex h-[4.5rem] w-[4.5rem] cursor-pointer items-center justify-center rounded-full border-2 border-cream/70 transition-transform duration-150 active:scale-95 md:h-20 md:w-20"
           >

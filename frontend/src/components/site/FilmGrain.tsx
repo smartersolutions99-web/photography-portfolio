@@ -1,14 +1,15 @@
 /**
  * Suptilna filmska "grain" tekstura preko tamnih sekcija — čist CSS/SVG šum
- * (feTurbulence kao data-URI pozadina), animiran preko globals.css keyframes.
- * Jedva primetno (podrazumevano ~4% opacity), mix-blend-overlay da se stopi
- * sa pozadinom umjesto da izgleda kao zaseban sloj.
+ * (feTurbulence kao data-URI pozadina). Namjerno STATIČNA (bez animacije) —
+ * animirani grain preko cijele (uvećane) sekcije je bio skup za renderovanje
+ * i pravio je "kočenje" pri skrolu. Ovako i dalje daje filmsku teksturu, samo
+ * bez kontinuiranog repaint-a.
  */
 export function FilmGrain({ opacity = 0.045, className }: { opacity?: number; className?: string }) {
   return (
     <div
       aria-hidden
-      className={`pointer-events-none absolute -inset-[25%] mix-blend-overlay [animation:grain-shift_1.1s_steps(8)_infinite] ${className ?? ""}`}
+      className={`pointer-events-none absolute inset-0 mix-blend-overlay ${className ?? ""}`}
       style={{
         opacity,
         backgroundImage:

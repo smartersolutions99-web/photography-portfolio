@@ -77,7 +77,7 @@ export function BeforeAfterSlider({ imageUrl, alt }: { imageUrl: string; alt?: s
       {/* Razdelnik */}
       <div className="pointer-events-none absolute inset-y-0" style={{ left: `${pos}%` }}>
         <div className="absolute inset-y-0 left-0 w-px -translate-x-1/2 bg-cream/90" />
-        <div className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cream/90 bg-ink/50 text-cream backdrop-blur-sm">
+        <div className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cream/90 bg-ink/70 text-cream">
           <span aria-hidden className="text-sm">
             ↔
           </span>
