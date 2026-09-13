@@ -12,12 +12,20 @@
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  /* Sakriven scrollbar (skrolovanje i dalje radi, samo je traka nevidljiva) */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Edge/IE */
+}
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge (Chromium) */
 }
 
 body {
   background-color: theme("colors.cream");
   color: theme("colors.ink");
   font-family: var(--font-sans, system-ui, sans-serif);
+  /* Sprječava horizontalni scroll od full-bleed elemenata (npr. w-screen trik) */
+  overflow-x: hidden;
 }
 
 ::selection {
@@ -137,6 +145,54 @@ html.lenis body {
 }
 .lenis.lenis-stopped {
   overflow: hidden;
+}
+
+/* Filmski grain — nasumično "trza" pozicija teksture (koristi FilmGrain komponent) */
+@keyframes grain-shift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-2%, -4%);
+  }
+  20% {
+    transform: translate(-6%, 2%);
+  }
+  30% {
+    transform: translate(4%, -6%);
+  }
+  40% {
+    transform: translate(-4%, 6%);
+  }
+  50% {
+    transform: translate(6%, 0%);
+  }
+  60% {
+    transform: translate(0%, 6%);
+  }
+  70% {
+    transform: translate(4%, 4%);
+  }
+  80% {
+    transform: translate(-2%, -2%);
+  }
+  90% {
+    transform: translate(2%, -4%);
+  }
+}
+
+/* Zvjezdano nebo — sitne tačkice koje blago trepere (koristi Starfield komponent) */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 /* Custom kursor — nativni ostaje svuda; skriva se SAMO nad radovima (data-cursor="view") */

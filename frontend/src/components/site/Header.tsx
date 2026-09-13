@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ContactInfo } from "@/lib/types";
 
 const NAV = [
@@ -15,12 +15,23 @@ const NAV = [
 ];
 
 export function Header({ siteName, contact }: { siteName: string; contact: ContactInfo }) {
-  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const lastY = useRef(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y < 80) {
+        setHidden(false);
+      } else if (y > lastY.current + 4) {
+        setHidden(true); // skroluje nadole -> sakrij
+      } else if (y < lastY.current - 4) {
+        setHidden(false); // skroluje nagore -> prikaži
+      }
+      lastY.current = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -37,31 +48,22 @@ export function Header({ siteName, contact }: { siteName: string; contact: Conta
     };
   }, [open]);
 
-  const solid = scrolled || open;
-  // Boja teksta: preko tamne foto-hero sekcije (transparentan header) koristimo
-  // mix-blend-difference da logo/meni budu čitljivi na bilo kojoj pozadini;
-  // kad je header pun (scrolled) ide obično ink, a kad je meni otvoren — cream.
-  const tone = open ? "text-cream" : scrolled ? "text-ink" : "text-cream mix-blend-difference";
-
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-[60] transition-colors duration-500 ${
-          solid ? "bg-cream/90 backdrop-blur-md border-b border-line" : "bg-transparent"
-        } ${open ? "!bg-transparent !border-transparent" : ""}`}
+        className={`fixed inset-x-0 top-0 z-[60] border-b border-cream/10 bg-ink text-cream transition-transform duration-500 ${
+          hidden && !open ? "-translate-y-full" : "translate-y-0"
+        }`}
       >
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-5 py-4 md:px-10 md:py-6">
-          <Link
-            href="/"
-            className={`display-cond text-lg tracking-widest transition-colors ${tone}`}
-          >
+          <Link href="/" className="display-cond text-lg tracking-widest">
             {siteName}
           </Link>
 
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className={`group flex items-center gap-3 transition-colors ${tone}`}
+            className="group flex items-center gap-3"
             aria-label={open ? "Zatvori meni" : "Otvori meni"}
           >
             <span className="eyebrow !text-current">{open ? "Zatvori" : "Meni"}</span>
