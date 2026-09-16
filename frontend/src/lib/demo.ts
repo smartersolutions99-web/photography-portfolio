@@ -129,6 +129,7 @@ export const home: Home = {
   heroSubtitle: "Dozvolite da vaše najljepše trenutke sačuvamo zauvijek.",
   heroUrl: img("1519741497674-611481863552", 1900, 1200),
   beforeAfterUrl: img("1511285560929-80b456fea0bc", 1600, 1067),
+  quoteUrl: img("1465495976277-4387d4b0b4c6", 1600, 1067),
   pressQuote: "Postoji li neko ko ovjekovječuje emociju kao ovaj objektiv?",
   pressSource: "IZ RECENZIJE",
   editorialStatement:

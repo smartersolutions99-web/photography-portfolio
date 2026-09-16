@@ -58,7 +58,7 @@ export default async function HomePage() {
   const nodes = buildTree(categories);
   const contactImage = home.heroUrl ?? home.featured[0]?.url ?? null;
   const quoteImage =
-    home.featured[2]?.url ?? home.featured[0]?.url ?? contactImage;
+    home.quoteUrl ?? home.featured[2]?.url ?? home.featured[0]?.url ?? contactImage;
 
   // Čisto vizuelne varijacije layout-a (visina slike, pozicija cutout panela) —
   // ciklično po indeksu, nezavisno od broja priča koje admin doda/ukloni.

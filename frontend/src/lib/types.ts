@@ -63,6 +63,7 @@ export interface Home {
   heroSubtitle: string | null;
   heroUrl: string | null;
   beforeAfterUrl: string | null;
+  quoteUrl: string | null;
   pressQuote: string | null;
   pressSource: string | null;
   editorialStatement: string | null;
@@ -84,6 +85,8 @@ export interface SiteSettings {
   heroUrl: string | null;
   beforeAfterPhotoId: number | null;
   beforeAfterUrl: string | null;
+  quotePhotoId: number | null;
+  quoteUrl: string | null;
   pressQuote: string | null;
   pressSource: string | null;
   editorialStatement: string | null;

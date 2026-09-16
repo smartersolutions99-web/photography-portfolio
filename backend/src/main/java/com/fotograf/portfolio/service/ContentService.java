@@ -99,6 +99,7 @@ public class ContentService {
         s.setHeroSubtitle(req.heroSubtitle());
         s.setHeroPhoto(resolvePhoto(req.heroPhotoId()));
         s.setBeforeAfterPhoto(resolvePhoto(req.beforeAfterPhotoId()));
+        s.setQuotePhoto(resolvePhoto(req.quotePhotoId()));
         s.setPressQuote(req.pressQuote());
         s.setPressSource(req.pressSource());
         s.setEditorialStatement(req.editorialStatement());

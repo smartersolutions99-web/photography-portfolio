@@ -6,7 +6,7 @@ import { ImagePicker } from "@/components/admin/ImagePicker";
 import { apiGet, apiSend } from "@/lib/adminApi";
 import type { Photo, SiteSettings } from "@/lib/types";
 
-type Form = Omit<SiteSettings, "heroUrl" | "beforeAfterUrl">;
+type Form = Omit<SiteSettings, "heroUrl" | "beforeAfterUrl" | "quoteUrl">;
 
 const EMPTY: Form = {
   siteName: "",
@@ -21,6 +21,7 @@ const EMPTY: Form = {
   heroSubtitle: "",
   heroPhotoId: null,
   beforeAfterPhotoId: null,
+  quotePhotoId: null,
   pressQuote: "",
   pressSource: "",
   editorialStatement: "",
@@ -43,7 +44,7 @@ export default function PodesavanjaPage() {
           apiGet<SiteSettings>("/api/admin/site-settings"),
           apiGet<Photo[]>("/api/admin/photos"),
         ]);
-        const { heroUrl, beforeAfterUrl, ...rest } = s;
+        const { heroUrl, beforeAfterUrl, quoteUrl, ...rest } = s;
         setForm({ ...EMPTY, ...rest });
         setPhotos(p);
       } catch {
@@ -157,6 +158,14 @@ export default function PodesavanjaPage() {
             <Field label="Citat / recenzija"><TextArea rows={3} value={t("pressQuote")} onChange={(e) => set("pressQuote", e.target.value)} /></Field>
             <Field label="Izvor citata"><TextInput value={t("pressSource")} onChange={(e) => set("pressSource", e.target.value)} /></Field>
           </div>
+          <Field label="Pozadinska slika iza citata" hint="Ako nije izabrana, koristi se jedan od featured radova.">
+            <ImagePicker
+              photos={photos}
+              value={form.quotePhotoId ?? null}
+              onChange={(id) => set("quotePhotoId", id)}
+              buttonLabel="Izaberi sliku"
+            />
+          </Field>
           <Field label="Editorial izjava"><TextArea rows={3} value={t("editorialStatement")} onChange={(e) => set("editorialStatement", e.target.value)} /></Field>
         </Card>
 

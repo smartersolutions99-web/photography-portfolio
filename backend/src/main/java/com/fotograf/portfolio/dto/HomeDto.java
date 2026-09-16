@@ -9,6 +9,7 @@ public record HomeDto(
         String heroSubtitle,
         String heroUrl,
         String beforeAfterUrl,
+        String quoteUrl,
         String pressQuote,
         String pressSource,
         String editorialStatement,

@@ -61,6 +61,10 @@ public class SiteSettings {
     @JoinColumn(name = "before_after_photo_id")
     private Photo beforeAfterPhoto;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_photo_id")
+    private Photo quotePhoto;
+
     @Column(name = "press_quote", columnDefinition = "text")
     private String pressQuote;
 
@@ -182,6 +186,14 @@ public class SiteSettings {
 
     public void setBeforeAfterPhoto(Photo beforeAfterPhoto) {
         this.beforeAfterPhoto = beforeAfterPhoto;
+    }
+
+    public Photo getQuotePhoto() {
+        return quotePhoto;
+    }
+
+    public void setQuotePhoto(Photo quotePhoto) {
+        this.quotePhoto = quotePhoto;
     }
 
     public String getPressQuote() {
