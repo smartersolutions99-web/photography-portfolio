@@ -381,7 +381,7 @@ export default async function HomePage() {
             />
             <Reveal y={0}>
               <BeforeAfterSlider
-                imageUrl={home.featured[5]?.url ?? home.featured[0]?.url ?? ""}
+                imageUrl={home.beforeAfterUrl ?? home.featured[5]?.url ?? home.featured[0]?.url ?? ""}
                 alt="Poređenje sirove i editovane fotografije"
               />
             </Reveal>

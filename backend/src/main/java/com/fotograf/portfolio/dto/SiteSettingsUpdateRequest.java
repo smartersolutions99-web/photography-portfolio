@@ -12,6 +12,7 @@ public record SiteSettingsUpdateRequest(
         String heroTitle,
         String heroSubtitle,
         Long heroPhotoId,
+        Long beforeAfterPhotoId,
         String pressQuote,
         String pressSource,
         String editorialStatement,

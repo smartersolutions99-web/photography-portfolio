@@ -88,6 +88,7 @@ public class DtoMapper {
 
     public SiteSettingsDto toSiteSettingsDto(SiteSettings s) {
         Photo hero = s.getHeroPhoto();
+        Photo beforeAfter = s.getBeforeAfterPhoto();
         return new SiteSettingsDto(
                 s.getSiteName(),
                 s.getTagline(),
@@ -101,6 +102,8 @@ public class DtoMapper {
                 s.getHeroSubtitle(),
                 hero != null ? hero.getId() : null,
                 hero != null ? storage.publicUrl(hero.getObjectKey()) : null,
+                beforeAfter != null ? beforeAfter.getId() : null,
+                beforeAfter != null ? storage.publicUrl(beforeAfter.getObjectKey()) : null,
                 s.getPressQuote(),
                 s.getPressSource(),
                 s.getEditorialStatement(),
@@ -110,12 +113,14 @@ public class DtoMapper {
 
     public HomeDto toHomeDto(SiteSettings s, List<Photo> featured) {
         Photo hero = s.getHeroPhoto();
+        Photo beforeAfter = s.getBeforeAfterPhoto();
         return new HomeDto(
                 s.getSiteName(),
                 s.getTagline(),
                 s.getHeroTitle(),
                 s.getHeroSubtitle(),
                 hero != null ? storage.publicUrl(hero.getObjectKey()) : null,
+                beforeAfter != null ? storage.publicUrl(beforeAfter.getObjectKey()) : null,
                 s.getPressQuote(),
                 s.getPressSource(),
                 s.getEditorialStatement(),

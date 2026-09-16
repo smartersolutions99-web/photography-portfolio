@@ -13,6 +13,8 @@ public record SiteSettingsDto(
         String heroSubtitle,
         Long heroPhotoId,
         String heroUrl,
+        Long beforeAfterPhotoId,
+        String beforeAfterUrl,
         String pressQuote,
         String pressSource,
         String editorialStatement,

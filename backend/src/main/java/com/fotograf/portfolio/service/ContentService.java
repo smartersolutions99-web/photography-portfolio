@@ -97,7 +97,8 @@ public class ContentService {
         s.setFacebookUrl(req.facebookUrl());
         s.setHeroTitle(req.heroTitle());
         s.setHeroSubtitle(req.heroSubtitle());
-        s.setHeroPhoto(resolveHeroPhoto(req.heroPhotoId()));
+        s.setHeroPhoto(resolvePhoto(req.heroPhotoId()));
+        s.setBeforeAfterPhoto(resolvePhoto(req.beforeAfterPhotoId()));
         s.setPressQuote(req.pressQuote());
         s.setPressSource(req.pressSource());
         s.setEditorialStatement(req.editorialStatement());
@@ -108,7 +109,7 @@ public class ContentService {
 
     // -------- helpers --------
 
-    private Photo resolveHeroPhoto(Long photoId) {
+    private Photo resolvePhoto(Long photoId) {
         if (photoId == null || photoId <= 0) {
             return null;
         }

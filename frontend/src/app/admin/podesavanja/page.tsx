@@ -6,7 +6,7 @@ import { ImagePicker } from "@/components/admin/ImagePicker";
 import { apiGet, apiSend } from "@/lib/adminApi";
 import type { Photo, SiteSettings } from "@/lib/types";
 
-type Form = Omit<SiteSettings, "heroUrl">;
+type Form = Omit<SiteSettings, "heroUrl" | "beforeAfterUrl">;
 
 const EMPTY: Form = {
   siteName: "",
@@ -20,6 +20,7 @@ const EMPTY: Form = {
   heroTitle: "",
   heroSubtitle: "",
   heroPhotoId: null,
+  beforeAfterPhotoId: null,
   pressQuote: "",
   pressSource: "",
   editorialStatement: "",
@@ -42,7 +43,7 @@ export default function PodesavanjaPage() {
           apiGet<SiteSettings>("/api/admin/site-settings"),
           apiGet<Photo[]>("/api/admin/photos"),
         ]);
-        const { heroUrl, ...rest } = s;
+        const { heroUrl, beforeAfterUrl, ...rest } = s;
         setForm({ ...EMPTY, ...rest });
         setPhotos(p);
       } catch {
@@ -119,6 +120,21 @@ export default function PodesavanjaPage() {
               value={form.heroPhotoId ?? null}
               onChange={(id) => set("heroPhotoId", id)}
               buttonLabel="Izaberi hero sliku"
+            />
+          </Field>
+        </Card>
+
+        <Card className="space-y-4">
+          <p className="font-medium">Prije / Poslije poređenje</p>
+          <Field
+            label="Slika za poređenje"
+            hint="Fotografija koja se prikazuje u sekciji 'Prije i poslije' na početnoj. Ako nije izabrana, koristi se jedan od featured radova."
+          >
+            <ImagePicker
+              photos={photos}
+              value={form.beforeAfterPhotoId ?? null}
+              onChange={(id) => set("beforeAfterPhotoId", id)}
+              buttonLabel="Izaberi sliku"
             />
           </Field>
         </Card>
