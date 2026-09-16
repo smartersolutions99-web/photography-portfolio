@@ -1,4 +1,4 @@
-import type { About, Category, CategoryDetail, ContactInfo, Home, Photo } from "./types";
+import type { About, Category, CategoryDetail, ContactInfo, Home, Photo, Story } from "./types";
 import * as demo from "./demo";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
@@ -53,6 +53,11 @@ export async function getCategory(slug: string): Promise<CategoryDetail> {
 export async function getAbout(): Promise<About> {
   const about = await getJson<About>("/about", demo.about);
   return about.portraitUrl ? about : demo.about;
+}
+
+export async function getStories(): Promise<Story[]> {
+  const stories = await getJson<Story[]>("/stories", demo.stories);
+  return stories.length > 0 ? stories : demo.stories;
 }
 
 export async function getContact(): Promise<ContactInfo> {

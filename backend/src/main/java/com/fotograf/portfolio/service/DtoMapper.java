@@ -5,6 +5,7 @@ import com.fotograf.portfolio.domain.Category;
 import com.fotograf.portfolio.domain.ContactMessage;
 import com.fotograf.portfolio.domain.Photo;
 import com.fotograf.portfolio.domain.SiteSettings;
+import com.fotograf.portfolio.domain.Story;
 import com.fotograf.portfolio.dto.AboutDto;
 import com.fotograf.portfolio.dto.CategoryDto;
 import com.fotograf.portfolio.dto.ContactInfoDto;
@@ -12,6 +13,7 @@ import com.fotograf.portfolio.dto.ContactMessageDto;
 import com.fotograf.portfolio.dto.HomeDto;
 import com.fotograf.portfolio.dto.PhotoDto;
 import com.fotograf.portfolio.dto.SiteSettingsDto;
+import com.fotograf.portfolio.dto.StoryDto;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -118,6 +120,18 @@ public class DtoMapper {
                 s.getPressSource(),
                 s.getEditorialStatement(),
                 toPhotoDtos(featured));
+    }
+
+    public StoryDto toStoryDto(Story s) {
+        Photo p = s.getPhoto();
+        return new StoryDto(
+                s.getId(),
+                s.getTitle(),
+                s.getBody(),
+                p != null ? storage.publicUrl(p.getObjectKey()) : null,
+                p != null ? p.getId() : null,
+                s.getAccentColor(),
+                s.getDisplayOrder());
     }
 
     public ContactMessageDto toContactMessageDto(ContactMessage m) {

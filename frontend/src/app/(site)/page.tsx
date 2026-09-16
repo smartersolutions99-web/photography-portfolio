@@ -14,7 +14,7 @@ import { RevealImage } from "@/components/site/RevealImage";
 import { ScrollDots } from "@/components/site/ScrollDots";
 import { SectionHeader } from "@/components/site/SectionHeader";
 import { Starfield } from "@/components/site/Starfield";
-import { getAbout, getCategories, getContact, getHome } from "@/lib/api";
+import { getAbout, getCategories, getContact, getHome, getStories } from "@/lib/api";
 import { buildTree } from "@/lib/categories";
 import { CATEGORY_PALETTE } from "@/lib/categoryPalette";
 import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
@@ -48,43 +48,31 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [home, about, categories, contact] = await Promise.all([
+  const [home, about, categories, contact, rawStories] = await Promise.all([
     getHome(),
     getAbout(),
     getCategories(),
     getContact(),
+    getStories(),
   ]);
   const nodes = buildTree(categories);
   const contactImage = home.heroUrl ?? home.featured[0]?.url ?? null;
   const quoteImage =
     home.featured[2]?.url ?? home.featured[0]?.url ?? contactImage;
 
-  const stories = [
-    {
-      title: "Venčanje u vinogradu",
-      text: "Zalazak sunca, miris grožđa i dvoje ljudi koji su rekli da. Pratili smo svjetlo cijelo poslijepodne dok se selilo kroz redove čokota.",
-      image: home.featured[2]?.url ?? home.featured[0]?.url ?? "",
-      accent: "#9A7B4F", // zlatna (postojeća accent boja sajta)
-      imgHeightMd: "md:h-[90vh]",
-      panelTop: 50,
-    },
-    {
-      title: "Porodica na moru",
-      text: "Bosi na pijesku, djeca koja trče ka valovima — najiskrenije fotografije su uvijek one koje niko nije pozirao.",
-      image: home.featured[3]?.url ?? home.featured[1]?.url ?? "",
-      accent: "#A9633F", // prigušena terakota
-      imgHeightMd: "md:h-[76vh]",
-      panelTop: 38,
-    },
-    {
-      title: "Rođendan u prirodi",
-      text: "Drveni sto ispod borova i smijeh koji se čuje sa svih strana. Proslava kakvu pamtiš godinama unazad.",
-      image: home.featured[4]?.url ?? home.featured[0]?.url ?? "",
-      accent: "#6E7A5E", // prigušena maslinasto-zelena
-      imgHeightMd: "md:h-[84vh]",
-      panelTop: 62,
-    },
+  // Čisto vizuelne varijacije layout-a (visina slike, pozicija cutout panela) —
+  // ciklično po indeksu, nezavisno od broja priča koje admin doda/ukloni.
+  const STORY_LAYOUTS = [
+    { imgHeightMd: "md:h-[90vh]", panelTop: 50 },
+    { imgHeightMd: "md:h-[76vh]", panelTop: 38 },
+    { imgHeightMd: "md:h-[84vh]", panelTop: 62 },
   ];
+  const stories = rawStories.map((story, i) => ({
+    ...story,
+    image: story.imageUrl ?? home.featured[i + 2]?.url ?? home.featured[0]?.url ?? "",
+    accent: story.accentColor,
+    ...STORY_LAYOUTS[i % STORY_LAYOUTS.length],
+  }));
 
   const dotSections = [
     { id: "sec-intro", label: "Početak" },
@@ -265,7 +253,7 @@ export default async function HomePage() {
               {stories.map((story, i) => {
                 const cutoutOnRight = i % 2 === 1;
                 return (
-                  <Reveal key={story.title} y={0}>
+                  <Reveal key={story.id} y={0}>
                     <div
                       className={`group relative mx-auto w-full max-w-[1600px] md:w-[90vw] ${
                         i % 2 === 1 ? "md:mt-16" : ""

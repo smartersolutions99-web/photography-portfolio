@@ -7,10 +7,12 @@ import com.fotograf.portfolio.dto.ContactInfoDto;
 import com.fotograf.portfolio.dto.ContactMessageRequest;
 import com.fotograf.portfolio.dto.HomeDto;
 import com.fotograf.portfolio.dto.PhotoDto;
+import com.fotograf.portfolio.dto.StoryDto;
 import com.fotograf.portfolio.service.CategoryService;
 import com.fotograf.portfolio.service.ContactService;
 import com.fotograf.portfolio.service.ContentService;
 import com.fotograf.portfolio.service.PhotoService;
+import com.fotograf.portfolio.service.StoryService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -32,13 +34,16 @@ public class PublicController {
     private final CategoryService categoryService;
     private final ContentService contentService;
     private final ContactService contactService;
+    private final StoryService storyService;
 
     public PublicController(PhotoService photoService, CategoryService categoryService,
-                            ContentService contentService, ContactService contactService) {
+                            ContentService contentService, ContactService contactService,
+                            StoryService storyService) {
         this.photoService = photoService;
         this.categoryService = categoryService;
         this.contentService = contentService;
         this.contactService = contactService;
+        this.storyService = storyService;
     }
 
     @GetMapping("/home")
@@ -67,6 +72,11 @@ public class PublicController {
     @GetMapping("/categories/{slug}")
     public CategoryDetailDto category(@PathVariable String slug) {
         return categoryService.getBySlug(slug);
+    }
+
+    @GetMapping("/stories")
+    public List<StoryDto> stories() {
+        return storyService.listAll();
     }
 
     @GetMapping("/about")

@@ -88,6 +88,16 @@ export interface SiteSettings {
   seoDescription: string | null;
 }
 
+export interface Story {
+  id: number;
+  title: string;
+  text: string;
+  imageUrl: string | null;
+  photoId: number | null;
+  accentColor: string;
+  displayOrder: number;
+}
+
 export interface ContactMessage {
   id: number;
   name: string;

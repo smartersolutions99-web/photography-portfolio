@@ -1,4 +1,4 @@
-import type { About, Category, CategoryDetail, ContactInfo, Home, Photo } from "./types";
+import type { About, Category, CategoryDetail, ContactInfo, Home, Photo, Story } from "./types";
 
 // Demo sadržaj koji se prikazuje kada backend nije dostupan (razvoj / prvi pokret).
 // Slike su sa Unsplash-a i služe samo kao placeholder.
@@ -141,6 +141,36 @@ export const about: About = {
     "Fotografijom se bavim više od deset godina. Kroz objektiv tražim iskrene, neponovljive trenutke i pretvaram ih u bezvremene slike.\n\nVjerujem da svaka priča zaslužuje da bude ispričana s pažnjom, stilom i emocijom — bilo da je riječ o vjenčanju, portretu ili tišini pejzaža.",
   portraitUrl: img("1500648767791-00dcc994a43e", 1000, 1300),
 };
+
+export const stories: Story[] = [
+  {
+    id: 1,
+    title: "Venčanje u vinogradu",
+    text: "Zalazak sunca, miris grožđa i dvoje ljudi koji su rekli da. Pratili smo svjetlo cijelo poslijepodne dok se selilo kroz redove čokota.",
+    imageUrl: img("1465495976277-4387d4b0b4c6", 1600, 1067),
+    photoId: null,
+    accentColor: "#9A7B4F",
+    displayOrder: 0,
+  },
+  {
+    id: 2,
+    title: "Porodica na moru",
+    text: "Bosi na pijesku, djeca koja trče ka valovima — najiskrenije fotografije su uvijek one koje niko nije pozirao.",
+    imageUrl: img("1519225421980-715cb0215aed", 1200, 1600),
+    photoId: null,
+    accentColor: "#A9633F",
+    displayOrder: 1,
+  },
+  {
+    id: 3,
+    title: "Rođendan u prirodi",
+    text: "Drveni sto ispod borova i smijeh koji se čuje sa svih strana. Proslava kakvu pamtiš godinama unazad.",
+    imageUrl: img("1506794778202-cad84cf45f1d", 1200, 1500),
+    photoId: null,
+    accentColor: "#6E7A5E",
+    displayOrder: 2,
+  },
+];
 
 export const contact: ContactInfo = {
   siteName: "STUDIO",
