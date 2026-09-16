@@ -10,15 +10,38 @@ import { BlurImage } from "./BlurImage";
  */
 export function BeforeAfterSlider({ imageUrl, alt }: { imageUrl: string; alt?: string }) {
   const [pos, setPos] = useState(50);
+  const [hideBefore, setHideBefore] = useState(false);
+  const [hideAfter, setHideAfter] = useState(false);
   const dragging = useRef(false);
   const frameRef = useRef<HTMLDivElement>(null);
+  const beforeLabelRef = useRef<HTMLSpanElement>(null);
+  const afterLabelRef = useRef<HTMLSpanElement>(null);
+
+  // Sakrij labelu čim je razdelnik (linija) prekrije — provjera po stvarnoj
+  // širini teksta u pikselima, ne po procentu (radi ispravno na svim širinama).
+  function checkLabelOverlap(pct: number) {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const frameRect = frame.getBoundingClientRect();
+    const dividerX = frameRect.left + (pct / 100) * frameRect.width;
+    const buffer = 24;
+    const overlaps = (ref: React.RefObject<HTMLElement | null>) => {
+      const el = ref.current;
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return dividerX >= r.left - buffer && dividerX <= r.right + buffer;
+    };
+    setHideBefore(overlaps(beforeLabelRef));
+    setHideAfter(overlaps(afterLabelRef));
+  }
 
   function updateFromClientX(clientX: number) {
     const el = frameRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
-    const pct = ((clientX - r.left) / r.width) * 100;
-    setPos(Math.min(100, Math.max(0, pct)));
+    const pct = Math.min(100, Math.max(0, ((clientX - r.left) / r.width) * 100));
+    setPos(pct);
+    checkLabelOverlap(pct);
   }
 
   function onPointerDown(e: React.PointerEvent) {
@@ -66,11 +89,21 @@ export function BeforeAfterSlider({ imageUrl, alt }: { imageUrl: string; alt?: s
         </div>
       </div>
 
-      {/* Labele */}
-      <span className="pointer-events-none absolute left-4 top-4 text-[0.6rem] uppercase tracking-[0.25em] text-cream/90 [text-shadow:0_1px_6px_rgba(0,0,0,0.7)] md:left-6 md:top-6">
+      {/* Labele — nestaju kad razdelnik pređe preko njih */}
+      <span
+        ref={beforeLabelRef}
+        className={`pointer-events-none absolute left-4 top-4 text-[0.6rem] uppercase tracking-[0.25em] text-cream/90 transition-opacity duration-200 [text-shadow:0_1px_6px_rgba(0,0,0,0.7)] md:left-6 md:top-6 ${
+          hideBefore ? "opacity-0" : "opacity-100"
+        }`}
+      >
         Sirovo
       </span>
-      <span className="pointer-events-none absolute right-4 top-4 text-[0.6rem] uppercase tracking-[0.25em] text-cream/90 [text-shadow:0_1px_6px_rgba(0,0,0,0.7)] md:right-6 md:top-6">
+      <span
+        ref={afterLabelRef}
+        className={`pointer-events-none absolute right-4 top-4 text-[0.6rem] uppercase tracking-[0.25em] text-cream/90 transition-opacity duration-200 [text-shadow:0_1px_6px_rgba(0,0,0,0.7)] md:right-6 md:top-6 ${
+          hideAfter ? "opacity-0" : "opacity-100"
+        }`}
+      >
         Editovano
       </span>
 
