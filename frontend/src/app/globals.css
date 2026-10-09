@@ -91,34 +91,19 @@ body {
   }
 }
 
-/* Intro: „skidanje poklopca objektiva" — viewfinder se otvara kružno iz centra.
-   Bazno je zatvoreno (crno); .iris-open ga animira do punog otvaranja. */
-.viewfinder-clip {
-  clip-path: circle(0% at 50% 50%);
-}
-.viewfinder-clip.iris-open {
-  animation: iris-open 1.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-@keyframes iris-open {
-  from {
-    clip-path: circle(0% at 50% 50%);
-  }
-  to {
-    clip-path: circle(150% at 50% 50%);
-  }
-}
-
 /* Masonry preko CSS kolona */
 .masonry {
   column-gap: 1rem;
 }
 .masonry > * {
   break-inside: avoid;
-  margin-bottom: 1rem;
 }
 @media (min-width: 640px) {
   .masonry {
     column-count: 2;
+  }
+  .masonry > * {
+    margin-bottom: 1rem;
   }
 }
 @media (min-width: 1024px) {

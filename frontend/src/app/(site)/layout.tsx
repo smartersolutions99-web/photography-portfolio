@@ -1,4 +1,3 @@
-import { CameraIntro } from "@/components/site/CameraIntro";
 import { Cursor } from "@/components/site/Cursor";
 import { FloatingContact } from "@/components/site/FloatingContact";
 import { Footer } from "@/components/site/Footer";
@@ -13,8 +12,6 @@ import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo";
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const [contact, home] = await Promise.all([getContact(), getHome()]);
   const name = contact.siteName ?? SITE_NAME;
-  // Ista slika koju kontakt hero koristi kao pozadinu — intro je „snima"
-  const introImage = home.heroUrl ?? home.featured[0]?.url ?? null;
 
   // Structured data: WebSite + fotografski biznis (LocalBusiness/ProfessionalService).
   // undefined polja se izbacuju iz izlaza (JSON.stringify ih preskače).
@@ -50,7 +47,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <SmoothScroll>
       <JsonLd data={jsonLd} />
-      <CameraIntro imageUrl={introImage} />
       <ScrollProgress />
       <Grain />
       <Cursor />

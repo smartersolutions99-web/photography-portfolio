@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ContactInfo } from "@/lib/types";
-import { ContactForm } from "./ContactForm";
+import { ContactMadLibs } from "./ContactMadLibs";
 import { Reveal } from "./Reveal";
 
 const NAV = [
@@ -18,7 +18,7 @@ export function Footer({ contact }: { contact: ContactInfo }) {
   return (
     <footer className="bg-ink text-cream">
       <div className="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-24">
-        <div className="grid gap-14 md:grid-cols-2 md:gap-20">
+        <div className="flex flex-col gap-14 md:gap-16">
           {/* Poziv + kontakt info */}
           <div>
             <Reveal>
@@ -69,11 +69,11 @@ export function Footer({ contact }: { contact: ContactInfo }) {
             </Reveal>
           </div>
 
-          {/* Brza forma */}
-          <Reveal delay={0.15}>
+          {/* Brza forma — ista kao na /kontakt, radi konzistentnosti */}
+          <Reveal delay={0.15} className="text-center">
             <p className="eyebrow !text-cream/50">Brzi upit</p>
-            <div className="mt-6">
-              <ContactForm tone="dark" compact />
+            <div className="mt-8">
+              <ContactMadLibs tone="dark" />
             </div>
           </Reveal>
         </div>

@@ -3,12 +3,9 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { useRef } from "react";
-import { useIntroReveal } from "@/lib/intro";
 import { smoothScrollTo } from "@/lib/scroll";
 import type { ContactInfo } from "@/lib/types";
 import { BlurImage } from "./BlurImage";
-import { ContactForm } from "./ContactForm";
-import { Typewriter } from "./Typewriter";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -16,6 +13,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
  * Kontakt-first hero koji se, dok se skrola, pretvara u „masthead": ista
  * fotografija ostaje zakačena (sticky), kontakt forma nestaje, a preko slike
  * doplovi ime studija + citat. Zatim se sajt nastavlja kao do sada.
+ * Ulazne animacije kreću odmah pri učitavanju (bez čekanja na intro).
  */
 export function ContactMasthead({
   contact,
@@ -35,7 +33,7 @@ export function ContactMasthead({
   targetId: string;
 }) {
   const ref = useRef<HTMLElement>(null);
-  const ready = useIntroReveal();
+  const ready = true;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
   const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.14]);
@@ -73,7 +71,7 @@ export function ContactMasthead({
                   <p className="eyebrow !text-cream/70">Fotografski studio{location ? ` · ${location}` : ""}</p>
                 </div>
                 <h2 className="display-serif mt-5 text-6xl leading-[0.88] text-cream md:text-8xl lg:text-9xl">
-                  {name.toUpperCase()}
+                  {name}
                 </h2>
                 {statement && (
                   <p className="mt-7 text-xl leading-[1.35] text-cream/85 md:text-2xl">{statement}</p>

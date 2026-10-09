@@ -19,18 +19,22 @@ const REVEALS = [
 ] as const;
 
 // Asimetrija: variraju širina, poravnanje unutar kolone i razmak ispod
+// (širine su relativne na kolonu, pa mix malih/velikih radi i kad je mobilni
+// prikaz već u 2 kolone, ne samo na desktopu)
 const LAYOUTS = [
-  "w-full mb-6 md:mb-10",
-  "w-[85%] ml-auto mb-14 md:mb-24",
-  "w-[92%] mb-8 md:mb-14",
-  "w-[76%] mx-auto mb-16 md:mb-28",
-  "w-[88%] mr-auto mb-10 md:mb-16",
+  "w-full mb-3 md:mb-10",
+  "w-[88%] ml-auto mb-8 md:mb-24",
+  "w-[95%] mb-4 md:mb-14",
+  "w-[80%] mx-auto mb-10 md:mb-28",
+  "w-[90%] mr-auto mb-5 md:mb-16",
 ] as const;
 
 /**
  * Asimetrični masonry kolaž istaknutih radova. Slike u prirodnom odnosu, bez
  * kropovanja; variraju širine, poravnanje i razmaci (editorial „dah"). Svaka
  * slika ulazi jednom od 4 animacije. Klik -> lightbox, hover -> naziv (bez kategorije).
+ * 2 kolone već na mobilnom (ne samo od sm naviše) da se vidi mix malih/velikih,
+ * a ne sve naslagano u jednoj vertikalnoj koloni.
  */
 export function FeaturedWorks({ photos }: { photos: Photo[] }) {
   const [index, setIndex] = useState(-1);
@@ -42,7 +46,7 @@ export function FeaturedWorks({ photos }: { photos: Photo[] }) {
 
   return (
     <div>
-      <div className="columns-1 gap-5 sm:columns-2 md:gap-8 xl:columns-3">
+      <div className="columns-2 gap-3 sm:gap-5 md:gap-8 xl:columns-3">
         {photos.map((photo, i) => {
           const reveal = REVEALS[i % REVEALS.length];
           const layout = LAYOUTS[i % LAYOUTS.length];

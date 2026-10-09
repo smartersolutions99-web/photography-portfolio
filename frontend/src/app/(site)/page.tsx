@@ -5,7 +5,6 @@ import { BlurImage } from "@/components/site/BlurImage";
 import { CategoryShowcase } from "@/components/site/CategoryShowcase";
 import { ContactMasthead } from "@/components/site/ContactMasthead";
 import { FeaturedWorks } from "@/components/site/FeaturedWorks";
-import { FilmGrain } from "@/components/site/FilmGrain";
 import { Magnetic } from "@/components/site/Interactive";
 import { ParallaxImageQuote } from "@/components/site/ParallaxImageQuote";
 import { PortfolioCamera } from "@/components/site/PortfolioCamera";
@@ -13,7 +12,6 @@ import { Reveal } from "@/components/site/Reveal";
 import { RevealImage } from "@/components/site/RevealImage";
 import { ScrollDots } from "@/components/site/ScrollDots";
 import { SectionHeader } from "@/components/site/SectionHeader";
-import { Starfield } from "@/components/site/Starfield";
 import { getAbout, getCategories, getContact, getHome, getStories } from "@/lib/api";
 import { buildTree } from "@/lib/categories";
 import { CATEGORY_PALETTE } from "@/lib/categoryPalette";
@@ -75,6 +73,7 @@ export default async function HomePage() {
   }));
 
   const dotSections = [
+    { id: "sec-gallery", label: "Galerija" },
     { id: "sec-intro", label: "Početak" },
     { id: "sec-studio", label: "Studio" },
     { id: "sec-stories", label: "Priče" },
@@ -100,6 +99,21 @@ export default async function HomePage() {
       <ScrollDots sections={dotSections} />
 
       <div id="dalje">
+        {/* 00 — Mozaik najboljih radova, odmah nakon hero-a */}
+        <section id="sec-gallery" className="bg-cream px-5 py-20 md:px-10 md:py-28">
+          <div className="mx-auto max-w-[1500px]">
+            <SectionHeader
+              index="00"
+              label="Prvi utisak"
+              title="Trenuci iz portfolija"
+              href="/galerija"
+              linkLabel="Sve fotografije"
+              className="mb-12 md:mb-16"
+            />
+            <FeaturedWorks photos={home.featured} />
+          </div>
+        </section>
+
         <section id="sec-intro" className="bg-[rgb(252,253,230)] px-5 py-20 md:px-10 md:py-28">
           <div className="mx-auto grid max-w-[1500px] items-center gap-10 md:grid-cols-3 md:gap-10">
             {/* Slika levo */}
@@ -152,8 +166,6 @@ export default async function HomePage() {
           id="sec-studio"
           className="relative flex flex-col justify-center overflow-hidden bg-ink px-5 py-16 md:max-h-[120vh] md:h-[120vh] md:px-10 md:py-0"
         >
-          <Starfield />
-          <FilmGrain />
           <div className="relative z-10 mx-auto w-full max-w-[1500px] h-[100%]">
             <div className="mb-8 flex items-baseline gap-4 border-t border-cream/15 pt-6 md:mb-10 md:gap-6">
               <span className="eyebrow pt-1 tabular-nums !text-cream/35">01</span>
@@ -168,7 +180,7 @@ export default async function HomePage() {
             <div className="flex flex-col gap-10 md:flex-row md:items-start md:gap-10">
               {about.portraitUrl && (
                 <Reveal className="md:w-[35%]" y={0}>
-                  <div className="relative aspect-[3/4] max-h-[85vh] w-full overflow-hidden bg-cream/5 md:max-h-[85vh] rounded-[29px]">
+                  <div className="relative aspect-[3/4] max-h-[85vh] w-full overflow-hidden bg-cream/5 md:max-h-[85vh]">
                     <BlurImage
                       src={about.portraitUrl}
                       alt={about.heading ?? "Portret fotografa"}
@@ -181,7 +193,6 @@ export default async function HomePage() {
               )}
               <Reveal className="md:mt-10 md:w-[38%]" delay={0.15}>
                 <p className="eyebrow !text-cream/50">Moja priča</p>
-                <span className="mt-4 block h-px w-14 bg-accent/60" />
                 <p className="mt-6 text-lg leading-loose text-cream/80">
                   {truncate(about.body, 420)}
                 </p>
@@ -203,22 +214,6 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-
-        {/* 02 — Izabrani radovi
-        <section className="bg-cream px-5 pb-24 md:px-10 md:pb-32">
-          <div className="mx-auto max-w-[1500px]">
-            <SectionHeader
-              index="02"
-              label="Izabrani radovi"
-              title="Najbolje iz portfolija"
-              href="/galerija"
-              linkLabel="Sve fotografije"
-              className="mb-16 md:mb-24"
-            />
-            <FeaturedWorks photos={home.featured} />
-          </div>
-        </section>
-        */}
 
         {/* Parallax citat preko slike */}
         {home.pressQuote && (
@@ -259,9 +254,9 @@ export default async function HomePage() {
                         i % 2 === 1 ? "md:mt-16" : ""
                       }`}
                     >
-                      {/* Slika — overflow-hidden je SAMO ovdje, ne obuhvata cutout panel */}
+                      {/* Slika — puni ceo ekran na mobilnom dok se skrola; overflow-hidden je SAMO ovdje, ne obuhvata cutout panel */}
                       <div
-                        className={`relative h-[70vh] w-full overflow-hidden bg-line/30 ring-1 ring-inset ring-ink/10 ${story.imgHeightMd}`}
+                        className={`relative h-[100svh] w-full overflow-hidden bg-line/30 ring-1 ring-inset ring-ink/10 ${story.imgHeightMd}`}
                       >
                         <RevealImage delay={0.05}>
                           {story.image && (
@@ -274,8 +269,9 @@ export default async function HomePage() {
                             />
                           )}
                         </RevealImage>
-                        {/* Suptilni scrim za dubinu */}
-                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-ink/5" />
+                        {/* Suptilni scrim za dubinu (desktop) + jači scrim pri dnu za čitljivost mobilnog overlay teksta */}
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-ink/5 md:from-ink/30" />
+                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent md:hidden" />
                         {/* Veliki, konturisani redni broj — editorijalni vodeni žig */}
                         <span
                           aria-hidden
@@ -285,9 +281,24 @@ export default async function HomePage() {
                         >
                           0{i + 1}
                         </span>
+
+                        {/* Tekst preko slike — SAMO mobilni (puni ekran, bez posebne kartice) */}
+                        <div className="pointer-events-auto absolute inset-x-0 bottom-0 p-6 pb-12 md:hidden">
+                          <span className="eyebrow !text-cream/70">{`Priča 0${i + 1}`}</span>
+                          <h3 className="display-serif mt-3 text-3xl leading-snug text-cream">
+                            {story.title}
+                          </h3>
+                          <p className="mt-3 text-sm leading-relaxed text-cream/80">{story.text}</p>
+                          <Link
+                            href="/galerija"
+                            className="link-underline eyebrow mt-5 inline-block !text-cream/85"
+                          >
+                            Pogledaj priču
+                          </Link>
+                        </div>
                       </div>
 
-                      {/* Cutout — na mobilnom panel ide ISPOD slike (blagi preklop, foto ostaje vidljiv); na desktopu "izlazi" preko ivice slike */}
+                      {/* Cutout — SAMO desktop, "izlazi" preko ivice slike */}
                       <div
                         style={
                           {
@@ -296,10 +307,10 @@ export default async function HomePage() {
                             "--panel-top": `${story.panelTop}%`,
                           } as React.CSSProperties
                         }
-                        className={`relative z-10 -mt-10 w-[88%] max-w-sm border border-ink/10 border-l-2 bg-cream p-6 shadow-[0_20px_45px_-20px_rgba(20,17,14,0.35)] transition-all duration-700 ease-out sm:p-8 md:absolute md:top-[var(--panel-top)] md:mt-0 md:w-[380px] md:max-w-none md:-translate-y-1/2 md:p-10 md:shadow-[0_40px_90px_-25px_rgba(20,17,14,0.45)] md:group-hover:shadow-[0_50px_110px_-25px_rgba(20,17,14,0.55)] ${
+                        className={`relative z-10 hidden max-w-sm border border-ink/10 border-l-2 bg-cream p-6 shadow-[0_20px_45px_-20px_rgba(20,17,14,0.35)] transition-all duration-700 ease-out sm:p-8 md:absolute md:top-[var(--panel-top)] md:block md:w-[380px] md:max-w-none md:-translate-y-1/2 md:p-10 md:shadow-[0_40px_90px_-25px_rgba(20,17,14,0.45)] md:group-hover:shadow-[0_50px_110px_-25px_rgba(20,17,14,0.55)] ${
                           cutoutOnRight
-                            ? "ml-auto mr-3 sm:mr-6 md:right-0 md:left-auto md:mr-0 md:translate-x-[22%] md:group-hover:translate-x-[19%]"
-                            : "ml-3 sm:ml-6 md:left-0 md:right-auto md:ml-0 md:-translate-x-[22%] md:group-hover:-translate-x-[19%]"
+                            ? "md:right-0 md:left-auto md:translate-x-[22%] md:group-hover:translate-x-[19%]"
+                            : "md:left-0 md:right-auto md:-translate-x-[22%] md:group-hover:-translate-x-[19%]"
                         }`}
                       >
                         <span className="eyebrow !text-ink/40">{`Priča 0${i + 1}`}</span>

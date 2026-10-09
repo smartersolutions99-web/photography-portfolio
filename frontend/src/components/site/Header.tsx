@@ -56,7 +56,7 @@ export function Header({ siteName, contact }: { siteName: string; contact: Conta
         }`}
       >
         <div className="mx-auto flex max-w-[1400px] items-center justify-between px-5 py-4 md:px-10 md:py-6">
-          <Link href="/" className="display-cond text-lg tracking-widest">
+          <Link href="/" className="display-cond text-base tracking-widest md:text-lg">
             {siteName}
           </Link>
 
@@ -66,7 +66,9 @@ export function Header({ siteName, contact }: { siteName: string; contact: Conta
             className="group flex items-center gap-3"
             aria-label={open ? "Zatvori meni" : "Otvori meni"}
           >
-            <span className="eyebrow !text-current">{open ? "Zatvori" : "Meni"}</span>
+            <span className="text-xs font-medium uppercase tracking-[0.28em] !text-current md:text-sm">
+              {open ? "Zatvori" : "Meni"}
+            </span>
             <span className="relative block h-3 w-7">
               <span
                 className={`absolute left-0 block h-px w-7 bg-current transition-all duration-300 ${

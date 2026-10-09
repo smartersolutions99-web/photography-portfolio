@@ -113,16 +113,16 @@ export function GalleryExplorer({
               type="button"
               onClick={() => setIndex(i)}
               data-cursor="view"
-              className="group relative block w-full overflow-hidden bg-line/40 text-left"
+              className="group relative block h-[100svh] w-full overflow-hidden bg-line/40 text-left sm:h-auto"
+              style={{ aspectRatio: `${p.width ?? 4} / ${p.height ?? 5}` }}
             >
               <BlurImage
                 src={p.thumbnailUrl || p.url}
                 alt={photoAlt(p)}
                 blurDataUrl={p.blurDataUrl}
-                width={p.width ?? 1000}
-                height={p.height ?? 1250}
+                fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="h-auto w-full object-cover transition-transform duration-[1200ms] ease-editorial group-hover:scale-105"
+                className="object-cover transition-transform duration-[1200ms] ease-editorial group-hover:scale-105"
               />
               <div className="pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-ink/70 via-ink/0 to-ink/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                 <div className="p-5">
